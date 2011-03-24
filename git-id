@@ -1,0 +1,27 @@
+#!/usr/bin/perl
+# vim: sts=4 sw=4 ts=4 expandtab:
+use strict;
+use warnings;
+
+my $git_dir = `git rev-parse --git-dir`;
+chomp $git_dir;
+
+my $gitids = "$git_dir/gitids.txt";
+
+open my $git_status, "git -c color.status=always status @ARGV|"
+    or die "Error: $!";
+
+open my $cache, ">$gitids"
+    or die "Error: $!";
+
+my $c = 1;
+while (my $line = <$git_status>) {
+    if ($line =~ /^#\t/) {
+        $line =~ s/^#/#$c/;
+        $c += 1;
+    }
+    print $line;
+    print $cache $line;
+}
+close $git_status;
+close $cache;

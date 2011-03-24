@@ -1,0 +1,68 @@
+#!/usr/bin/perl
+# vim: sts=4 sw=4 ts=4 expandtab:
+# gl - List files from .git/gitids.txt
+
+use strict;
+use warnings;
+use Getopt::Std;
+
+my %opts;
+my $valid_option = getopts('dh', \%opts);
+sub usage {
+    print "Usage: gl [-dh] <number pattern>
+    -d         debug mode
+    -h         Show this help message
+    ";
+}
+if (exists $opts{h}) {
+    usage();
+    exit 0;
+}
+my $debug = $opts{d};
+
+my $number_pattern;
+if (scalar @ARGV == 0) {
+    $number_pattern = '[0-9]+';
+} else {
+    $number_pattern = join('|', @ARGV);
+    $number_pattern =~ s/(\d+)-(\d+)/join('|', $1..$2)/ge;
+}
+
+my $git_dir = `git rev-parse --git-dir`;
+chomp $git_dir;
+
+my $gitids = "$git_dir/gitids.txt";
+if (! -f $gitids) {
+    print "Please run git-number first\n";
+    exit 1;
+}
+
+open my $cache, "<$gitids" or die "Error: $!";
+
+my $current_group;
+while (my $line = <$cache>) {
+    if ($line =~ /^# Changes to be committed:/) {
+        $current_group = 'cached';
+    }
+    elsif ($line =~ /^# Changed but not updated:/) {
+        $current_group = 'modified';
+    }
+    elsif ($line =~ /^# Untracked files:/) {
+        $current_group = 'untracked';
+    }
+
+    next if $line !~ /^#[0-9]+\t/;
+    my $line_nocolor = $line;
+    $line_nocolor =~ s/\e[^m]+m//g;
+
+    if (my ($number, $status, $filename) = $line_nocolor =~ /^#($number_pattern)\t([^:]+:\s+)?(.*)/)
+    {
+        if (defined $debug) {
+            print "$status ";
+        }
+        if ($filename =~ / /) {
+            $filename = '"' . $filename . '"';
+        }
+        print "$filename\n";
+    }
+}

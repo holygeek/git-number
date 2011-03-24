@@ -1,0 +1,24 @@
+#!/bin/sh
+# git-number:
+#
+# When run without args: Runs git-id and exit (numbers your files for git's
+#                        consumption later)
+# When run with args: Runs git, and replaces any number it found in the args with the
+#                     equivalent filename from the previous run of git-number
+
+if [ $# -eq 0 ]; then
+    git-id
+    exit
+fi
+
+for arg in "$@";do
+    if [[ $arg =~ ^[0-9][0-9]*$ ]]; then
+	arg=`git-list $arg`
+    elif [[ $arg =~ ^[0-9][0-9]*-[0-9][0-9]*$ ]]; then
+	arg=`git-list $arg`
+    fi
+    args="$args $arg"
+done
+
+echo git $args
+git $args
