@@ -7,18 +7,30 @@ use warnings;
 use Getopt::Std;
 
 my %opts;
-my $valid_option = getopts('dh', \%opts);
+my $valid_option = getopts('h', \%opts);
 sub usage {
-    print "Usage: gl [-dh] <number pattern>
-    -d         debug mode
+    print "SYNOPSIS
+
+    git-list [-h] [number pattern]
+
+DESCRIPTION
+
+    git-list lists the corresponding filenames given their number that was
+    previously assigned by git-id.
+
+    [number pattern] can either be a single number or a range:
+
+        git-list 1 5-6
+
+OPTION
+
     -h         Show this help message
-    ";
+";
 }
 if (exists $opts{h}) {
     usage();
     exit 0;
 }
-my $debug = $opts{d};
 
 my $number_pattern;
 if (scalar @ARGV == 0) {
@@ -57,9 +69,6 @@ while (my $line = <$cache>) {
 
     if (my ($number, $status, $filename) = $line_nocolor =~ /^#($number_pattern)\t([^:]+:\s+)?(.*)/)
     {
-        if (defined $debug) {
-            print "$status ";
-        }
         if ($filename =~ / /) {
             $filename = '"' . $filename . '"';
         }
