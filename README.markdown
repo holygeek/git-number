@@ -80,8 +80,7 @@ Batteries.
 
 1. Runs "git status" and inserts a number before each file reported by "git
    status"
-2. Show and save a copy of the output to a file /tmp/gitids.txt (this is where
-   the "git-tee" name comes from).
+2. Show and save a copy of the output to a file (.git/gitids.txt)
 
 (If you're pedantic then it does four things)
 
