@@ -6,8 +6,36 @@
 # When run with args: Runs git, and replaces any number it found in the args with the
 #                     equivalent filename from the previous run of git-number
 
+me=`basename $0`
+usage() {
+    echo -n "Usage: $me [-h] [--color=<when>] [git-cmd [git-options] [files or numbers]]
+
+    --color=<when>  Enable or disable colorized git-status output, when is one of
+                    always, auto or never. Default is always
+    -h        Show this help message
+"
+}
+
+if [ "x$1" = "x-h" ]; then
+	usage ; exit;
+fi
+
+color=always
+if [ "x$1" = "x--color=always" ]; then
+	color=always;
+	shift
+fi
+if [ "x$1" = "x--color=auto" ]; then
+	color=auto;
+	shift
+fi
+if [ "x$1" = "x--color=never" ]; then
+	color=never;
+	shift
+fi
+
 if [ $# -eq 0 ]; then
-    git-id
+    git-id --color=$color
     exit
 fi
 

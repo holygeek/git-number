@@ -8,7 +8,13 @@ chomp $git_dir;
 
 my $gitids = "$git_dir/gitids.txt";
 
-open my $git_status, "git -c color.status=always status @ARGV|"
+my $color = 'always';
+if ($ARGV[0] =~ /--color=(always|auto|never)/) {
+    $color = $1;
+    shift @ARGV;
+}
+
+open my $git_status, "git -c color.status=$color status @ARGV|"
     or die "Error: $!";
 
 open my $cache, ">$gitids"
