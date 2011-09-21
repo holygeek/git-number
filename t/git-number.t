@@ -2,7 +2,7 @@
 use strict;
 use warnings;
 use FindBin;
-use Test::More qw/no_plan/;
+use Test::More tests => 3;
 use File::Path qw/make_path remove_tree/;
 use File::Slurp qw/slurp/;
 
