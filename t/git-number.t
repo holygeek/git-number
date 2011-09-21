@@ -4,8 +4,13 @@ use warnings;
 use FindBin;
 use Test::More qw/no_plan/;
 use File::Path qw/make_path remove_tree/;
-use Test::Differences;
 use File::Slurp qw/slurp/;
+
+BEGIN {
+	if (! eval q{use Test::Differences; 1 }) {
+		*eq_or_diff = \&is_deeply;
+	}
+}
 
 my $srcdir = "$FindBin::Bin/../";
 
