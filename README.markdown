@@ -1,7 +1,7 @@
 ### git-number ###
 
-git-number is a shell script that increases my command-line git productivity
-(with some help from two perl scripts).
+git-number is a perl script that increases my command-line git productivity
+(with some help from another two perl scripts).
 
 ## Usage Examples ##
 
