@@ -1,4 +1,7 @@
-#!/bin/sh
+#!/usr/bin/perl
+use strict;
+use warnings;
+
 # git-number:
 #
 # When run without args: Runs git-id and exit (numbers your files for git's
@@ -6,47 +9,72 @@
 # When run with args: Runs git, and replaces any number it found in the args with the
 #                     equivalent filename from the previous run of git-number
 
-me=`basename $0`
-usage() {
-    echo -n "Usage: $me [-h] [--color=<when>] [git-cmd [git-options] [files or numbers]]
+=pod
 
-    --color=<when>  Enable or disable colorized git-status output, when is one of
-                    always, auto or never. Default is always
-    -h        Show this help message
-"
+=head1 NAME
+
+git-number
+
+=head1 SYNOPSIS
+
+    git-number [-h|--color=<when>] [git-cmd [git-options] [files or numbers]]
+
+=head1 OPTIONS
+
+=over 4
+
+=item --color=<when>
+
+Enable or disable colorized git-status output, E<lt>whenE<gt> is one of
+I<always>, I<auto> or I<never>. Default is I<always>.
+
+=item -h
+
+Show this help message
+
+=back
+=cut
+
+my $me = __FILE__;
+sub show_usage_and_exit {
+    my ($exit_value) = @_;
+    $exit_value = 0 if ! defined $exit_value;
+    system(qq[perldoc "$0"]);
+    exit $exit_value;
 }
 
-if [ "x$1" = "x-h" ]; then
-	usage ; exit;
-fi
+my $first_arg = $ARGV[0] || '';
 
-color=always
-if [ "x$1" = "x--color=always" ]; then
-	color=always;
-	shift
-fi
-if [ "x$1" = "x--color=auto" ]; then
-	color=auto;
-	shift
-fi
-if [ "x$1" = "x--color=never" ]; then
-	color=never;
-	shift
-fi
+if ($first_arg eq '-h') {
+    show_usage_and_exit();
+}
 
-if [ $# -eq 0 ]; then
-    git-id --color=$color
+my $color = 'always';
+if ( $first_arg =~ m{--color=([a-z]+)} ) {
+    if ($1 =~ m{(always|auto|never)}) {
+        $color = $1;
+        shift @ARGV;
+    } else {
+        show_usage_and_exit(1);
+    }
+}
+
+if (scalar @ARGV == 0) {
+    system("git-id --color=$color");
     exit
-fi
+}
 
-for arg in "$@";do
-    if [[ $arg =~ ^[0-9][0-9]*$ ]]; then
-	arg=`git-list $arg`
-    elif [[ $arg =~ ^[0-9][0-9]*-[0-9][0-9]*$ ]]; then
-	arg=`git-list $arg`
-    fi
-    args="$args $arg"
-done
+my @args;
+foreach my $arg (@ARGV) {
+    if ( $arg =~ m/^[0-9][0-9]*$/ ) {
+        push @args, split("\n", `git-list $arg`);
+    } elsif ( $arg =~ m/^[0-9][0-9]*-[0-9][0-9]*$/ ) {
+        push @args, split("\n", `git-list $arg`);
+    } else {
+        push @args, $arg;
+    }
+}
 
-echo git $args
-git $args
+my $git_cmd = "git " . join(' ', @args);
+print $git_cmd . "\n";
+system($git_cmd);
