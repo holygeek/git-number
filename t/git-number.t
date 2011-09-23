@@ -2,7 +2,7 @@
 use strict;
 use warnings;
 use FindBin;
-use Test::More tests => 3;
+use Test::More tests => 4;
 use File::Path qw/make_path remove_tree/;
 use File::Slurp qw/slurp/;
 
@@ -85,6 +85,32 @@ $expected = <<EOT;
 #
 #1	new file:   one.txt
 #2	new file:   two.txt
+#
+EOT
+$got = `cd $workdir; $srcdir/git-number --color=never`;
+eq_or_diff($got, $expected, $testname); #:}
+
+$testname = "Status with deleted file"; #{:
+`
+cd $workdir &&
+rm -f two.txt
+`;
+$expected = <<EOT;
+# On branch master
+#
+# Initial commit
+#
+# Changes to be committed:
+#   (use "git rm --cached <file>..." to unstage)
+#
+#1	new file:   one.txt
+#2	new file:   two.txt
+#
+# Changes not staged for commit:
+#   (use "git add/rm <file>..." to update what will be committed)
+#   (use "git checkout -- <file>..." to discard changes in working directory)
+#
+#3	deleted:    two.txt
 #
 EOT
 $got = `cd $workdir; $srcdir/git-number --color=never`;
