@@ -1,7 +1,9 @@
 testdir = t/testoutput
 
+all: test clean
+
 test:
-	prove t
+	@prove t
 	
 clean:
-	$(RM) -r $(testdir)
+	@$(RM) -r $(testdir)
