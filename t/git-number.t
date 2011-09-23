@@ -2,7 +2,7 @@
 use strict;
 use warnings;
 use FindBin;
-use Test::More tests => 4;
+use Test::More tests => 5;
 use File::Path qw/make_path remove_tree/;
 use File::Slurp qw/slurp/;
 
@@ -112,6 +112,19 @@ $expected = <<EOT;
 #
 #3	deleted:    two.txt
 #
+EOT
+$got = `cd $workdir; $srcdir/git-number --color=never`;
+eq_or_diff($got, $expected, $testname); #:}
+
+$testname = "Status after commit and reset --hard"; #{:
+`
+cd $workdir &&
+git commit -m 'initial commit' &&
+git reset --hard
+`;
+$expected = <<EOT;
+# On branch master
+nothing to commit (working directory clean)
 EOT
 $got = `cd $workdir; $srcdir/git-number --color=never`;
 eq_or_diff($got, $expected, $testname); #:}
