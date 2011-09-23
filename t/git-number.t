@@ -2,7 +2,7 @@
 use strict;
 use warnings;
 use FindBin;
-use Test::More tests => 5;
+use Test::More tests => 7;
 use File::Path qw/make_path remove_tree/;
 use File::Slurp qw/slurp/;
 
@@ -127,6 +127,35 @@ $expected = <<EOT;
 nothing to commit (working directory clean)
 EOT
 $got = `cd $workdir; $srcdir/git-number --color=never`;
+eq_or_diff($got, $expected, $testname); #:}
+
+$testname = "git-number status foo.txt"; #{:
+`
+cd $workdir &&
+echo foo > foo.txt
+`;
+$expected = <<EOT;
+# On branch master
+# Untracked files:
+#   (use "git add <file>..." to include in what will be committed)
+#
+#1	foo.txt
+nothing added to commit but untracked files present (use "git add" to track)
+EOT
+$got = `cd $workdir; $srcdir/git-number --color=never`;
+eq_or_diff($got, $expected, $testname); #:}
+
+$testname = "git-number status 1"; #{:
+$expected = <<EOT;
+git status foo.txt
+# On branch master
+# Untracked files:
+#   (use "git add <file>..." to include in what will be committed)
+#
+#	foo.txt
+nothing added to commit but untracked files present (use "git add" to track)
+EOT
+$got = `cd $workdir; $srcdir/git-number --color=never status 1`;
 eq_or_diff($got, $expected, $testname); #:}
 
 # vim:fdm=marker foldmarker={\:,\:}: commentstring=\ #%s
