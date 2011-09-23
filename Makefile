@@ -1,5 +1,7 @@
+testdir = t/testoutput
+
 test:
 	prove t
 	
 clean:
-	rm -f t/workdir
+	$(RM) -r $(testdir)
