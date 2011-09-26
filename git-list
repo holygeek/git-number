@@ -32,35 +32,88 @@ if (exists $opts{h}) {
     exit 0;
 }
 
-my $number_pattern;
-if (scalar @ARGV == 0) {
-    $number_pattern = '[0-9]+';
-} else {
-    $number_pattern = join('|', @ARGV);
-    $number_pattern =~ s/(\d+)-(\d+)/join('|', $1..$2)/ge;
+my $wanted_ids = explode_args(@ARGV);
+
+if (ref $wanted_ids eq 'ARRAY') {
+    my $file_for = get_file_ids();
+    foreach my $id (@$wanted_ids) {
+        if (defined $file_for->{$id}) {
+            print $file_for->{$id} . "\n";
+        }
+    }
+} elsif ($wanted_ids eq 'all') {
+    my @file_list = get_file_list();
+    foreach my $entry (@file_list) {
+        print  $entry->{filename} . "\n";
+    }
+}
+exit 0;
+# Add subs below this line
+
+sub get_file_list {
+    my $git_dir = `git rev-parse --git-dir`;
+    chomp $git_dir;
+
+    my $gitids = "$git_dir/gitids.txt";
+    if (! -f $gitids) {
+        print "Please run git-number first\n";
+        exit 1;
+    }
+
+    my @file_list;
+    open my $cache, "<$gitids" or die "Error: $!";
+    while (my $line = <$cache>) {
+        next if $line !~ /^#[0-9]+\t/;
+        chomp $line;
+        my $line_nocolor = $line;
+        $line_nocolor =~ s/\e[^m]+m//g;
+        if (my ($number, $status, $filename)
+                = $line_nocolor =~ /^#([0-9]+)\t([^:]+:\s+)?(.*)/) {
+            push @file_list, {
+                    number => $number,
+                    status => $status,
+                    filename => $filename,
+                };
+        }
+    }
+    close $cache;
+    return @file_list;
 }
 
-my $git_dir = `git rev-parse --git-dir`;
-chomp $git_dir;
+sub get_file_ids {
+    my @file_list = get_file_list();
 
-my $gitids = "$git_dir/gitids.txt";
-if (! -f $gitids) {
-    print "Please run git-number first\n";
-    exit 1;
-}
-
-open my $cache, "<$gitids" or die "Error: $!";
-
-while (my $line = <$cache>) {
-    next if $line !~ /^#[0-9]+\t/;
-    my $line_nocolor = $line;
-    $line_nocolor =~ s/\e[^m]+m//g;
-
-    if (my ($number, $status, $filename) = $line_nocolor =~ /^#($number_pattern)\t([^:]+:\s+)?(.*)/)
-    {
+    my %file_for;
+    foreach my $entry (@file_list) {
+        my $filename = $entry->{filename};
         if ($filename =~ / /) {
             $filename = '"' . $filename . '"';
         }
-        print "$filename\n";
+        $file_for{$entry->{number}} = $filename;
     }
+    return \%file_for;
+}
+
+sub explode_args {
+    my (@ARGV) = @_;
+    if (scalar @ARGV == 0) {
+        return 'all';
+    }
+    my @wanted_ids;
+    foreach my $arg (@ARGV) {
+        if ($arg =~ m/^[0-9]+$/) {
+            push @wanted_ids, $arg;
+        } elsif ($arg =~ m/^([0-9]+)-([0-9]+)/) {
+            my $a = $1;
+            my $b = $2;
+            if ($a > $b) {
+                $a = $b;
+                $b = $1;
+            }
+            push @wanted_ids, $a..$b;
+        } else {
+            push @wanted_ids, $arg;
+        }
+    }
+    return \@wanted_ids;
 }
