@@ -4,7 +4,7 @@ use warnings;
 use lib 't/lib';
 use Scaffold qw/$workdir $srcdir/;
 
-use Test::More tests => 4;
+use Test::More tests => 5;
 
 my $got;
 my $expected;
@@ -46,6 +46,14 @@ $got = `cd $workdir; $srcdir/git-list 1 2 1 2`;
 $expected = <<EOT;
 one.txt
 two.txt
+one.txt
+two.txt
+EOT
+eq_or_diff($got, $expected, $testname); #:}
+
+$testname = "git-list"; #{:
+$got = `cd $workdir; $srcdir/git-list`;
+$expected = <<EOT;
 one.txt
 two.txt
 EOT
