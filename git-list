@@ -6,26 +6,31 @@ use strict;
 use warnings;
 use Getopt::Std;
 
+=pod
+
+=head1 SYNOPSIS
+
+git-list [-h] [number pattern]
+
+=head1 DESCRIPTION
+
+git-list lists the corresponding filenames given their number that was
+previously assigned by git-id.
+
+[number pattern] can either be a single number or a range:
+
+    git-list 1 5-6
+
+=head1 OPTIONS
+
+    -h         Show this help message
+
+=cut
+
 my %opts;
 my $valid_option = getopts('h', \%opts);
 sub usage {
-    print "SYNOPSIS
-
-    git-list [-h] [number pattern]
-
-DESCRIPTION
-
-    git-list lists the corresponding filenames given their number that was
-    previously assigned by git-id.
-
-    [number pattern] can either be a single number or a range:
-
-        git-list 1 5-6
-
-OPTION
-
-    -h         Show this help message
-";
+    system(qq[perldoc $0]);
 }
 if (exists $opts{h}) {
     usage();
