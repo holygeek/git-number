@@ -6,4 +6,4 @@ test:
 	@prove t
 	
 clean:
-	@$(RM) -r $(testdir)
+	$(RM) -r $(testdir)
