@@ -28,12 +28,21 @@ git-number
 Enable or disable colorized git-status output, E<lt>whenE<gt> is one of
 I<always>, I<auto> or I<never>. Default is I<always>.
 
+=item -v
+
+Show version information
+
 =item -h
 
 Show this help message
 
 =back
+
+=head1 VERSION
+
+1.0
 =cut
+my $VERSION = '1.0'; # Don't forget to update the one in pod!
 
 my $me = __FILE__;
 sub show_usage_and_exit {
@@ -47,6 +56,11 @@ my $first_arg = $ARGV[0] || '';
 
 if ($first_arg eq '-h') {
     show_usage_and_exit();
+}
+
+if ($first_arg eq '-v') {
+    print "$VERSION\n";
+	exit 0;
 }
 
 my $color = 'always';
