@@ -2,7 +2,6 @@
 use strict;
 use warnings;
 use Test::More tests => 7;
-use File::Slurp qw/slurp/;
 
 use lib 't/lib';
 use Scaffold qw/$workdir $srcdir/;
