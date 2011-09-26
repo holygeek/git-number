@@ -4,7 +4,7 @@ use warnings;
 use lib 't/lib';
 use Scaffold qw/$workdir $srcdir/;
 
-use Test::More tests => 5;
+use Test::More tests => 6;
 
 my $got;
 my $expected;
@@ -12,12 +12,22 @@ my $testname;
 
 Scaffold::init();
 
-$testname = "git-list 1"; #{:
+$testname = "git-list before git-number"; #{:
 `
 cd $workdir &&
 git init &&
 echo a > one.txt &&
-echo b > two.txt &&
+echo b > two.txt
+`;
+$got = `cd $workdir; $srcdir/git-list 2>&1`;
+$expected = <<EOT;
+Please run git-number first
+EOT
+eq_or_diff($got, $expected, $testname); #:}
+
+$testname = "git-list 1"; #{:
+`
+cd $workdir &&
 $srcdir/git-number
 `;
 $got = `cd $workdir; $srcdir/git-list 1`;
