@@ -1,25 +1,11 @@
 #!/usr/bin/env perl
 use strict;
 use warnings;
-use FindBin;
 use Test::More tests => 7;
-use File::Path qw/make_path remove_tree/;
 use File::Slurp qw/slurp/;
 
-BEGIN {
-	if (! eval q{use Test::Differences; 1 }) {
-		*eq_or_diff = \&is_deeply;
-	}
-}
-
-my $srcdir = "$FindBin::Bin/../";
-
-my $workdir = "$FindBin::Bin/testoutput";
-
-remove_tree($workdir);
-make_path($workdir);
-
-$ENV{PATH} = "$srcdir:" . $ENV{PATH};
+use lib 't/lib';
+use Scaffold qw/$workdir $srcdir/;
 
 my $got;
 my $expected;
