@@ -51,18 +51,7 @@ if (! -f $gitids) {
 
 open my $cache, "<$gitids" or die "Error: $!";
 
-my $current_group;
 while (my $line = <$cache>) {
-    if ($line =~ /^# Changes to be committed:/) {
-        $current_group = 'cached';
-    }
-    elsif ($line =~ /^# Changed but not updated:/) {
-        $current_group = 'modified';
-    }
-    elsif ($line =~ /^# Untracked files:/) {
-        $current_group = 'untracked';
-    }
-
     next if $line !~ /^#[0-9]+\t/;
     my $line_nocolor = $line;
     $line_nocolor =~ s/\e[^m]+m//g;
