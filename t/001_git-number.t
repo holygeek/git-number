@@ -1,7 +1,7 @@
 #!/usr/bin/env perl
 use strict;
 use warnings;
-use Test::More tests => 7;
+use Test::More tests => 8;
 
 use lib 't/lib';
 use Scaffold qw/$workdir $srcdir/;
@@ -141,6 +141,15 @@ git status foo.txt
 nothing added to commit but untracked files present (use "git add" to track)
 EOT
 $got = `cd $workdir; $srcdir/git-number --color=never status 1`;
+eq_or_diff($got, $expected, $testname); #:}
+
+$testname = "git-number -c ls 1"; #{:
+`cd $workdir; $srcdir/git-number`;
+$expected = <<EOT;
+ls foo.txt
+foo.txt
+EOT
+$got = `cd $workdir; $srcdir/git-number -c ls 1`;
 eq_or_diff($got, $expected, $testname); #:}
 
 # vim:fdm=marker foldmarker={\:,\:}: commentstring=\ #%s

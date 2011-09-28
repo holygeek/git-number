@@ -63,6 +63,12 @@ if ($first_arg eq '-v') {
 	exit 0;
 }
 
+my $run = 'git';
+if ($first_arg eq '-c') {
+	shift @ARGV;
+	$run = shift @ARGV;
+}
+
 my $color = 'always';
 if ( $first_arg =~ m{--color=([a-z]+)} ) {
     if ($1 =~ m{(always|auto|never)}) {
@@ -89,6 +95,6 @@ foreach my $arg (@ARGV) {
     }
 }
 
-my $git_cmd = "git " . join(' ', @args);
-print $git_cmd . "\n";
-system($git_cmd);
+my $cmd = "$run " . join(' ', @args);
+print $cmd . "\n";
+system($cmd);
