@@ -56,6 +56,20 @@ Which is the same as writing
 
     $ ga 2 3 4 6 10
 
+You can also ask git-number to run arbitrary command instead of git on the
+given arguments using the -c option:
+
+    $ gn -c rm 1
+
+This will run the command "rm README"
+
+The kind of fun that this gives you include the following:
+
+    $ alias vn='git number -c vi'
+    $ vn 1
+
+This will run "vi README"
+
 ## What's included ##
 
 1. git-number: Show or operate on files by their 'ids'
