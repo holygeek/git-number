@@ -4,10 +4,6 @@ use warnings;
 
 # git-number:
 #
-# When run without args: Runs git-id and exit (numbers your files for git's
-#                        consumption later)
-# When run with args: Runs git, and replaces any number it found in the args with the
-#                     equivalent filename from the previous run of git-number
 
 =pod
 
@@ -17,7 +13,18 @@ git-number
 
 =head1 SYNOPSIS
 
-    git-number [-h|--color=<when>] [git-cmd [git-options] [files or numbers]]
+    git-number [-h|--color=<when>|-c <cmd>] [git-cmd [git-options] [files or numbers]]
+
+=head1 DESCRIPTION
+
+When run without args:
+
+Runs git-id and exit (numbers your files for git's consumption later)
+
+When run with args:
+
+Runs git, and replaces any number it found in the args with the equivalent
+filename from the previous run of git-number
 
 =head1 OPTIONS
 
@@ -27,6 +34,10 @@ git-number
 
 Enable or disable colorized git-status output, E<lt>whenE<gt> is one of
 I<always>, I<auto> or I<never>. Default is I<always>.
+
+=item -c <cmd>
+
+Runs I<E<lt>cmdE<gt>> instead of git on the given arguments.
 
 =item -v
 
