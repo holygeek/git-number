@@ -5,6 +5,8 @@
 use strict;
 use warnings;
 use Getopt::Std;
+use File::Spec;
+use Cwd qw/getcwd abs_path/;
 
 =pod
 
@@ -67,6 +69,14 @@ sub get_file_list {
 
     my @file_list;
     open my $cache, "<$gitids" or die "Error: $!";
+
+    my $headers = read_headers($cache);
+    my $cwd = getcwd();
+    my $needfixdir = 0;
+    if ($headers->{cwd} ne $cwd) {
+        $needfixdir = 1;
+        $cwd = abs_path($cwd);
+    }
     while (my $line = <$cache>) {
         next if $line !~ /^#[0-9]+\t/;
         chomp $line;
@@ -74,6 +84,10 @@ sub get_file_list {
         $line_nocolor =~ s/\e[^m]+m//g;
         if (my ($number, $status, $filename)
                 = $line_nocolor =~ /^#([0-9]+)\t([^:]+:\s+)?(.*)/) {
+
+            if ($needfixdir) {
+                $filename = fixdir($filename, $headers->{cwd}, $cwd);
+            }
             push @file_list, {
                     number => $number,
                     status => $status,
@@ -83,6 +97,18 @@ sub get_file_list {
     }
     close $cache;
     return @file_list;
+}
+
+sub read_headers {
+    my ($cache) = @_;
+    my %headers;
+    while (my $line = <$cache>) {
+        chomp $line;
+        last if length $line == 0;
+        my ($field, $value) = split(/:\s*/, $line, 2);
+        $headers{$field} = $value;
+    }
+    return \%headers;
 }
 
 sub get_file_ids {
@@ -121,4 +147,11 @@ sub explode_args {
         }
     }
     return \@wanted_ids;
+}
+
+sub fixdir {
+    my ($filename, $orig_cwd, $cwd) = @_;
+    my $abspath = File::Spec->catfile($orig_cwd, $filename);
+    $abspath = abs_path($abspath);
+    return File::Spec->abs2rel($abspath, $cwd);
 }

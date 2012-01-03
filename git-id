@@ -2,6 +2,7 @@
 # vim: sts=4 sw=4 ts=4 expandtab:
 use strict;
 use warnings;
+use Cwd;
 
 my $git_dir = `git rev-parse --git-dir`;
 chomp $git_dir;
@@ -19,6 +20,10 @@ open my $git_status, "git -c color.status=$color status @ARGV|"
 
 open my $cache, ">$gitids"
     or die "Error: $!";
+
+# Headers
+print $cache "cwd: " . getcwd . "\n";
+print $cache "\n";
 
 my $c = 1;
 while (my $line = <$git_status>) {
