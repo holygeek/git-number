@@ -9,7 +9,7 @@ chomp $git_dir;
 my $gitids = "$git_dir/gitids.txt";
 
 my $color = 'always';
-if ($ARGV[0] =~ /--color=(always|auto|never)/) {
+if (scalar @ARGV && $ARGV[0] =~ /--color=(always|auto|never)/) {
     $color = $1;
     shift @ARGV;
 }
