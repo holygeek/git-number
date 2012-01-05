@@ -1,7 +1,7 @@
 #!/usr/bin/env perl
 use strict;
 use warnings;
-use Test::More tests => 8;
+use Test::More tests => 9;
 
 use lib 't/lib';
 use Scaffold qw/$workdir $srcdir/;
@@ -150,6 +150,15 @@ ls foo.txt
 foo.txt
 EOT
 $got = `cd $workdir; $srcdir/git-number -c ls 1`;
+eq_or_diff($got, $expected, $testname); #:}
+
+$testname = "'git-number -c ...' in different dir than 'git-number' was invoked in"; #{:
+`cd $workdir; echo "Needle" > needle.txt; mkdir foo; cd foo; $srcdir/git-number`;
+$expected = <<EOT;
+cat needle.txt
+Needle
+EOT
+$got = `cd $workdir; $srcdir/git-number -c cat 2`;
 eq_or_diff($got, $expected, $testname); #:}
 
 # vim:fdm=marker foldmarker={\:,\:}: commentstring=\ #%s
