@@ -39,6 +39,10 @@ I<always>, I<auto> or I<never>. Default is I<always>.
 
 Runs I<E<lt>cmdE<gt>> instead of git on the given arguments.
 
+=item -s
+
+Give the output in the short-format.
+
 =item -v
 
 Show version information
@@ -72,6 +76,22 @@ if ($first_arg eq '-h') {
 if ($first_arg eq '-v') {
     print "$VERSION\n";
 	exit 0;
+}
+
+if ($first_arg eq '-s') {
+  my $color = 'always';
+  if (scalar @ARGV && $ARGV[0] =~ /--color=(always|auto|never)/) {
+      $color = $1;
+      shift @ARGV;
+  }
+  open my $git_status, "git -c color.status=$color status -s|"  or die "Error: $!";
+  my $c = 1;
+  while (my $line = <$git_status>) {
+      $line =~ s/^/$c /;
+      $c += 1;
+      print $line;
+  }
+  exit 0;
 }
 
 my $run = 'git';
