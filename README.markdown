@@ -123,7 +123,7 @@ filenames and passes them down to git.
     #
     #1      renamed:    a.txt -> b.txt
     #
-    $ gn reset 1  # <- this will NOT do what you want it to do!
+    $ gn reset 1  # this will NOT do what you want it to do!
 </pre>
 
 I'm sure there are a few more. Send me a patch :)
