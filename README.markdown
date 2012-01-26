@@ -132,3 +132,7 @@ I'm sure there are a few more. Send me a patch :)
 
 Copy (or make a symbolic link to) 'git-number', 'git-list', 'git-id' into your
 $HOME/bin directory, or wherever you prefer to put them.
+
+## See also ##
+
+[scm_breeze](https://github.com/ndbroadbent/scm_breeze) by Nathan Broadbent -  similar in spirit with git-number, has more features, requires either bash or zsh.
