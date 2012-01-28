@@ -82,10 +82,8 @@ sub get_file_list {
             while (my $line = <$cache>) {
                 next if $line !~ /^#[0-9]+\t/;
                 chomp $line;
-                my $line_nocolor = $line;
-                $line_nocolor =~ s/\e[^m]+m//g;
                 if (my ($number, $status, $filename)
-                        = $line_nocolor =~ /^#([0-9]+)\t([^:]+:\s+)?(.*)/) {
+                        = $line =~ /^#([0-9]+)\t([^:]+:\s+)?(.*)/) {
 
                     if ($filename =~ / \(.*\)$/ && ! -e $filename) {
                         # Looks like a submodule status, see if it really is a submodule
@@ -110,10 +108,8 @@ sub get_file_list {
             while (my $line = <$cache>) {
                 next if $line !~ /^[0-9]+\s/;
                 chomp $line;
-                my $line_nocolor = $line;
-                $line_nocolor =~ s/\e[^m]+m//g;
                 if (my ($number, $status, $filename)
-                        = $line_nocolor =~ /^([0-9]+)\s+([^ ]+)\s+(.*)/) {
+                        = $line =~ /^([0-9]+)\s+([^ ]+)\s+(.*)/) {
 
                     if ($needfixdir) {
                         $filename = fixdir($filename, $headers->{cwd}, $cwd);
