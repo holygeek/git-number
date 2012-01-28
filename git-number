@@ -13,7 +13,7 @@ git-number
 
 =head1 SYNOPSIS
 
-    git-number [-h|--color=<when>|-c <cmd>] [git-cmd [git-options] [files or numbers]]
+    git-number [-h|--color=<when>] [<git-cmd|-c <cmd>> [git-or-cmd-options] [files or numbers]]
 
 =head1 DESCRIPTION
 
