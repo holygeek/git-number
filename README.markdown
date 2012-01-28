@@ -22,6 +22,14 @@ Here's how it increase my productivity (it might increase yours too):
 Does the output look familiar? Notice the numbers before the filenames? Those
 are their ids.
 
+If you prefer the short status format then you can use the -s option.  This
+will run ``git status`` with the ``--short`` option.
+
+    $ git number -s
+    1 ?? .README.swp
+    2 ?? README
+
+
 Now look at this:
 
     $ ga 2
