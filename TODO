@@ -1,14 +1,1 @@
-- Make git-list works in a different directory than where git-number was run.
-- Handle status for modified files in submodule. For example for this status line:
-
-	#3      modified:   script/guider-js (modified content, untracked content)
-
-  Wrong:
-
-	$ git list 3
-	"script/guider-js (modified content, untracked content)"
-
-  Correct:
-
-	$ git list 3
-	script/guider-js
+All done!
