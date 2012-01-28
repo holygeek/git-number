@@ -63,30 +63,22 @@ sub show_usage_and_exit {
     exit $exit_value;
 }
 
-my $first_arg = $ARGV[0] || '';
-
-if ($first_arg eq '-h') {
-    show_usage_and_exit();
-}
-
-if ($first_arg eq '-v') {
-    print "$VERSION\n";
-	exit 0;
-}
-
 my $run = 'git';
-if ($first_arg eq '-c') {
-	shift @ARGV;
-	$run = shift @ARGV;
-}
-
 my $color = 'always';
-if ( $first_arg =~ m{--color=([a-z]+)} ) {
-    if ($1 =~ m{(always|auto|never)}) {
+while (scalar @ARGV && $ARGV[0] =~ /^-/) {
+    my $option = shift @ARGV;
+    if ($option eq '-h') {
+        show_usage_and_exit();
+    } elsif ($option eq '-v') {
+        print "$VERSION\n";
+        exit 0;
+    } elsif ($option eq '-c') {
+        $run = shift @ARGV;
+    } elsif ($option =~ m{--color=(always|auto|never)}) {
         $color = $1;
-        shift @ARGV;
     } else {
-        show_usage_and_exit(1);
+        print "Unknown option: $option\n";
+        exit 1;
     }
 }
 
