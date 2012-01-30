@@ -38,6 +38,7 @@ I<always>, I<auto> or I<never>. Default is I<always>.
 =item -c <cmd>
 
 Runs I<E<lt>cmdE<gt>> instead of git on the given arguments.
+All arguments that follows <cmd> will be passed on to <cmd>.
 
 =item -s
 
@@ -79,6 +80,7 @@ while (scalar @ARGV && $ARGV[0] =~ /^-/) {
         exit 0;
     } elsif ($option eq '-c') {
         $run = shift @ARGV;
+        last;
     } elsif ($option =~ m{--color=(always|auto|never)}) {
         $color = $1;
     } elsif ($option eq '-s') {
