@@ -16,8 +16,10 @@ git-list [-h] [number pattern]
 
 =head1 DESCRIPTION
 
-git-list lists the corresponding filenames given their number that was
-previously assigned by git-id.
+git-list lists the corresponding filenames given their numbers that was
+previously assigned by git-id. It lists one filename per line of output. Any
+other argument or numbers that has no filenames associated with it will be
+printed as is.
 
 [number pattern] can either be a single number or a range:
 
@@ -45,8 +47,11 @@ if (ref $wanted_ids eq 'ARRAY') {
     my $file_for = get_file_ids();
     foreach my $id (@$wanted_ids) {
         if (defined $file_for->{$id}) {
-            print $file_for->{$id} . "\n";
+            print $file_for->{$id};
+        } else {
+            print $id;
         }
+        print "\n";
     }
 } elsif ($wanted_ids eq 'all') {
     my @file_list = get_file_list();
