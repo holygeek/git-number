@@ -4,7 +4,6 @@
 
 use strict;
 use warnings;
-use Getopt::Std;
 use File::Spec;
 use Cwd qw/getcwd abs_path/;
 
@@ -31,13 +30,8 @@ printed as is.
 
 =cut
 
-my %opts;
-my $valid_option = getopts('h', \%opts);
-sub usage {
+if (defined $ARGV[0] && $ARGV[0] eq '-h') {
     system(qq[perldoc $0]);
-}
-if (exists $opts{h}) {
-    usage();
     exit 0;
 }
 

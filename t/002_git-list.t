@@ -4,7 +4,7 @@ use warnings;
 use lib 't/lib';
 use Scaffold qw/$workdir $srcdir/;
 
-use Test::More tests => 9;
+use Test::More tests => 10;
 
 my $got;
 my $expected;
@@ -82,6 +82,15 @@ one.txt
 two.txt
 one.txt
 two.txt
+EOT
+eq_or_diff($got, $expected, $testname); #:}
+
+$testname = "pass args that look like options intact";
+$got = `cd $workdir; $srcdir/git-list -a -b -c`;
+$expected = <<EOT;
+-a
+-b
+-c
 EOT
 eq_or_diff($got, $expected, $testname); #:}
 
