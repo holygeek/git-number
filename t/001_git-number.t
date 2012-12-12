@@ -107,12 +107,15 @@ cd $workdir &&
 git commit -m 'initial commit' &&
 git reset --hard
 `;
-$expected = <<EOT;
-# On branch master
-nothing to commit (working directory clean)
-EOT
+
+# This is the price you pay when scripting against porcelain:
+my $expected_regex = qr/# On branch master
+nothing to commit,? \(?working directory clean\)?
+/;
+# In git 1.7, it was    "nothing to commit (working directory clean)"
+# In git 1.8, it became "nothing to commit, working directory clean"
 $got = `cd $workdir; $srcdir/git-number --color=never`;
-eq_or_diff($got, $expected, $testname); #:}
+like($got, $expected_regex, $testname); #:}
 
 $testname = "git-number status foo.txt"; #{:
 `
