@@ -97,16 +97,21 @@ if (scalar @ARGV == 0) {
 }
 
 my @args;
+my $converted=0;
 foreach my $arg (@ARGV) {
     if ( $arg =~ m/^[0-9][0-9]*$/ ) {
         push @args, split("\n", `git-list $arg`);
+        $converted=1;
     } elsif ( $arg =~ m/^[0-9][0-9]*-[0-9][0-9]*$/ ) {
         push @args, split("\n", `git-list $arg`);
+        $converted=1;
     } else {
         push @args, $arg;
     }
 }
 
 my $cmd = "$run " . join(' ', @args);
-print $cmd . "\n";
+if ( $converted ) {
+    print $cmd . "\n";
+}
 system($cmd);
