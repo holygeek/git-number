@@ -1,6 +1,7 @@
 #!/usr/bin/perl
 use strict;
 use warnings;
+use File::Basename;
 
 # git-number:
 #
@@ -60,12 +61,28 @@ Show this help message
 =cut
 my $VERSION = '1.0'; # Don't forget to update the one in pod!
 
-my $me = __FILE__;
+my $me = basename(__FILE__);
 sub show_usage_and_exit {
     my ($exit_value) = @_;
     $exit_value = 0 if ! defined $exit_value;
     system(qq[perldoc "$0"]);
     exit $exit_value;
+}
+
+sub run_cmd {
+    my ($cmd) = @_;
+    system($cmd);
+    if ($? == -1) {
+        print "$me: failed to execute: $!\n";
+        return 1;
+    } elsif ($? & 127) {
+        printf "$me: child died with signal %d, %s coredump\n",
+        ($? & 127),  ($? & 128) ? 'with' : 'without';
+
+        return 1;
+    }
+    # return $? >> 8;
+    return 0;
 }
 
 my $run = 'git';
@@ -92,8 +109,12 @@ while (scalar @ARGV && $ARGV[0] =~ /^-/) {
 }
 
 if (scalar @ARGV == 0) {
-    system("git-id --color=$color $status_format");
-    exit
+    my $cmd = join(' ',
+            "git-id",
+            "--color=$color",
+            "$status_format",
+        );
+    exit run_cmd($cmd);
 }
 
 my @args;
@@ -114,4 +135,4 @@ my $cmd = "$run " . join(' ', @args);
 if ( $converted ) {
     print $cmd . "\n";
 }
-system($cmd);
+exit run_cmd($cmd);
