@@ -81,8 +81,7 @@ sub run_cmd {
 
         return 1;
     }
-    # return $? >> 8;
-    return 0;
+    return $? >> 8;
 }
 
 my $run = 'git';
