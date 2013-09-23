@@ -24,15 +24,5 @@ echo 'one' > one.txt &&
 `;
 $got = `cd $workdir; $srcdir/git-number --color=always`;
 $got =~ s/\e\[\d*m//gs;
-$expected = <<EOT;
-# On branch master
-#
-# Initial commit
-#
-# Changes to be committed:
-#   (use "git rm --cached <file>..." to unstage)
-#
-#1	new file:   one.txt
-#
-EOT
-eq_or_diff($got, $expected, $testname); #:}
+$expected = qr/1\tnew file:   one.txt\n/ms;
+like($got, $expected, $testname); #:}

@@ -43,7 +43,7 @@ print $cache "\n";
 my $c = 1;
 while (my $line = <$git_status>) {
     if ($status_style == $STATUS_DEFAULT) {
-        if ($line =~ /^\t/) {
+        if ($line =~ /\t/) {
             $line =~ s/\t/$c\t/;
             $c += 1;
         } elsif ($line =~ /#\t/) {

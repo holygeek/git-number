@@ -18,14 +18,8 @@ cd $workdir &&
 git init
 `;
 $got = `cd $workdir; $srcdir/git-id 2>&1`;
-$expected = <<EOT;
-# On branch master
-#
-# Initial commit
-#
-nothing to commit (create/copy files and use "git add" to track)
-EOT
-eq_or_diff($got, $expected, $testname); #:}
+$expected = qr/(# )?On branch master\n#?\n(# )?Initial commit\n#?\nnothing to commit \(create\/copy files and use "git add" to track\)/;
+like($got, $expected, $testname); #:}
 
 $testname = 'git-id - untracked files'; #{:
 `
@@ -34,19 +28,8 @@ echo a > a &&
 echo b > b
 `;
 $got = `cd $workdir; $srcdir/git-id --color=never 2>&1`;
-$expected = <<EOT;
-# On branch master
-#
-# Initial commit
-#
-# Untracked files:
-#   (use "git add <file>..." to include in what will be committed)
-#
-#1	a
-#2	b
-nothing added to commit but untracked files present (use "git add" to track)
-EOT
-eq_or_diff($got, $expected, $testname); #:}
+$expected = qr/Untracked files:.*\n#?1\ta\n#?2\tb\n\n?nothing added to commit but untracked files present \(use "git add" to track\)/ms;
+like($got, $expected, $testname); #:}
 
 $testname = 'git-id - added and untracked files'; #{:
 `
@@ -54,21 +37,7 @@ cd $workdir &&
 git add a
 `;
 $got = `cd $workdir; $srcdir/git-id --color=never 2>&1`;
-$expected = <<EOT;
-# On branch master
-#
-# Initial commit
-#
-# Changes to be committed:
-#   (use "git rm --cached <file>..." to unstage)
-#
-#1	new file:   a
-#
-# Untracked files:
-#   (use "git add <file>..." to include in what will be committed)
-#
-#2	b
-EOT
-eq_or_diff($got, $expected, $testname); #:}
+$expected = qr/Changes to be committed:.*#?1\tnew file:   a\n.*Untracked files:.*#?2\tb\n/ms;
+like($got, $expected, $testname); #:}
 
 # vim:fdm=marker foldmarker={\:,\:}: commentstring=\ #%s
