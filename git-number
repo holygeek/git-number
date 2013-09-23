@@ -107,7 +107,7 @@ while (scalar @ARGV && $ARGV[0] =~ /^-/) {
     }
 }
 
-if (scalar @ARGV == 0) {
+if ($run eq 'git' && scalar @ARGV == 0) {
     my $cmd = join(' ',
             "git-id",
             "--color=$color",

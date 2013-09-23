@@ -1,7 +1,7 @@
 #!/usr/bin/env perl
 use strict;
 use warnings;
-use Test::More tests => 9;
+use Test::More tests => 10;
 
 use lib 't/lib';
 use Scaffold qw/$workdir $srcdir/;
@@ -162,6 +162,13 @@ cat needle.txt
 Needle
 EOT
 $got = `cd $workdir; $srcdir/git-number -c cat 2`;
+eq_or_diff($got, $expected, $testname); #:}
+
+$testname = "'git-number -c echo' must run echo"; #{:
+$expected = <<EOT;
+
+EOT
+$got=`git-number -c echo`;
 eq_or_diff($got, $expected, $testname); #:}
 
 # vim:fdm=marker foldmarker={\:,\:}: commentstring=\ #%s
