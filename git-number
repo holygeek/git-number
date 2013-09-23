@@ -73,10 +73,10 @@ sub run_cmd {
     my ($cmd) = @_;
     system($cmd);
     if ($? == -1) {
-        print "$me: failed to execute: $!\n";
+        print STDERR "$me: $!\n";
         return 1;
     } elsif ($? & 127) {
-        printf "$me: child died with signal %d, %s coredump\n",
+        printf STDERR "$me: child died with signal %d, %s coredump\n",
         ($? & 127),  ($? & 128) ? 'with' : 'without';
 
         return 1;
