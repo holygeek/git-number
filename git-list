@@ -79,10 +79,12 @@ sub get_file_list {
     my $status_processor_for = {
         '' => sub {
             while (my $line = <$cache>) {
-                next if $line !~ /^#[0-9]+\t/;
+                next if $line !~ /^#?[0-9]+\t/;
                 chomp $line;
                 if (my ($number, $status, $filename)
-                        = $line =~ /^#([0-9]+)\t([^:]+:\s+)?(.*)/) {
+                        = $line =~ /^#?([0-9]+)\t([^:]+:\s+)?(.*)/) {
+
+
 
                     if ($filename =~ / \(.*\)$/ && ! -e $filename) {
                         # Looks like a submodule status, see if it really is a submodule
