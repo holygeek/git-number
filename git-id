@@ -13,6 +13,7 @@ my $color = 'always';
 my $STATUS_DEFAULT = 0;
 my $STATUS_SHORT = 1;
 my $status_style = $STATUS_DEFAULT;
+my $status_u_opt = '';
 
 while (scalar @ARGV && $ARGV[0] =~ /^-/) {
     my $option = shift @ARGV;
@@ -20,6 +21,8 @@ while (scalar @ARGV && $ARGV[0] =~ /^-/) {
         $color = $1;
     } elsif ($option eq '--short') {
         $status_style = $STATUS_SHORT;
+    } elsif ($option =~ m{^-u(no|normal|all)$}) {
+        $status_u_opt = $option;
     } else {
         print "Unknown option: $option\n";
         exit 1;

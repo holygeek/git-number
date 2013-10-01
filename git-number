@@ -87,6 +87,7 @@ sub run_cmd {
 my $run = 'git';
 my $color = 'always';
 my $status_format = '';
+my $status_u_opt = '';
 while (scalar @ARGV && $ARGV[0] =~ /^-/) {
     my $option = shift @ARGV;
     if ($option eq '-h') {
@@ -101,6 +102,8 @@ while (scalar @ARGV && $ARGV[0] =~ /^-/) {
         $color = $1;
     } elsif ($option eq '-s') {
         $status_format = '--short';
+    } elsif ($option =~ m{^-u(no|normal|all)$}) {
+        $status_u_opt = $option;
     } else {
         print "Unknown option: $option\n";
         exit 1;
@@ -111,6 +114,7 @@ if ($run eq 'git' && scalar @ARGV == 0) {
     my $cmd = join(' ',
             "git-id",
             "--color=$color",
+            "$status_u_opt",
             "$status_format",
         );
     exit run_cmd($cmd);
