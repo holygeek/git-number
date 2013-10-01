@@ -17,6 +17,7 @@ my $status_u_opt = '';
 
 while (scalar @ARGV && $ARGV[0] =~ /^-/) {
     my $option = shift @ARGV;
+    last if $option eq '--';
     if ($option =~ /--color=(always|auto|never)/) {
         $color = $1;
     } elsif ($option eq '--short') {
@@ -31,7 +32,8 @@ while (scalar @ARGV && $ARGV[0] =~ /^-/) {
 
 my @status_option_for = ( '', '--short' );
 my $status_format = $status_option_for[$status_style];
-my $git_cmd = "git -c color.status=$color status $status_format @ARGV";
+my $git_cmd = "git -c color.status=$color status $status_u_opt $status_format "
+              . join(' ', @ARGV);
 open my $git_status, "$git_cmd|"
     or die "Error: $!";
 
