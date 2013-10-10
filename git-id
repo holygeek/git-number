@@ -4,6 +4,8 @@ use strict;
 use warnings;
 use Cwd;
 
+my $red = "\e[31m";
+my $normal = "\e[0m";
 my $git_dir = `git rev-parse --git-dir`;
 chomp $git_dir;
 
@@ -13,26 +15,41 @@ my $color = 'always';
 my $STATUS_DEFAULT = 0;
 my $STATUS_SHORT = 1;
 my $status_style = $STATUS_DEFAULT;
-my $status_u_opt = '';
+my $status_opt = '';
 
+my $untracked_in_columns = 0;
 while (scalar @ARGV && $ARGV[0] =~ /^-/) {
     my $option = shift @ARGV;
     last if $option eq '--';
     if ($option =~ /--color=(always|auto|never)/) {
         $color = $1;
+        if ($color =~ /never/) {
+            $red = $normal = '';
+        }
     } elsif ($option eq '--short') {
         $status_style = $STATUS_SHORT;
     } elsif ($option =~ m{^-u(no|normal|all)$}) {
-        $status_u_opt = $option;
+        $status_opt .= " $option";
+    } elsif ($option =~ /^--column/) {
+        if ($option eq '--column=never' || ($option =~ /--column(=auto)?$/ && ! -t STDOUT)) {
+            $untracked_in_columns = 0;
+        } else {
+            $untracked_in_columns = 1;
+        }
+        $status_opt .= " $option";
     } else {
         print "Unknown option: $option\n";
         exit 1;
     }
 }
 
+if (! $untracked_in_columns) {
+    $status_opt .= " --column=never";
+}
+
 my @status_option_for = ( '', '--short' );
 my $status_format = $status_option_for[$status_style];
-my $git_cmd = "git -c color.status=$color status $status_u_opt $status_format "
+my $git_cmd = "git -c color.status=$color status $status_opt $status_format "
               . join(' ', @ARGV);
 open my $git_status, "$git_cmd|"
     or die "Error: $!";
@@ -45,14 +62,23 @@ print $cache "cwd: " . getcwd . "\n";
 print $cache "status-format: $status_format\n";
 print $cache "\n";
 
+my $seen_untracked = 0;
 my $c = 1;
 while (my $line = <$git_status>) {
+    if ($line =~ /Untracked files:/) {
+        $seen_untracked = 1;
+    }
+
     if ($status_style == $STATUS_DEFAULT) {
-        if ($line =~ /\t/) {
-            $line =~ s/\t/$c\t/;
-            $c += 1;
-        } elsif ($line =~ /#\t/) {
+        if ($seen_untracked && $line =~ /\t/ && $untracked_in_columns) {
+            last;
+        }
+
+        if ($line =~ /#\t/) {
             $line =~ s/#\t/#$c\t/;
+            $c += 1;
+        } elsif ($line =~ /\t/) {
+            $line =~ s/\t/$c\t/;
             $c += 1;
         }
     } elsif ($status_style == $STATUS_SHORT) {
@@ -61,9 +87,60 @@ while (my $line = <$git_status>) {
             $c += 1;
         }
     }
-    print $line;
-    $line =~ s/\e\[\d*m//g;
-    print $cache $line;
+    show_and_cache($line);
 }
+
+if ($untracked_in_columns) {
+    my @untracked;
+    my @the_rest;
+    while (my $line = <$git_status>) {
+        if ($line =~ /\t/) {
+            push @untracked, $line;
+        } else {
+            push @the_rest, $line;
+        }
+    }
+
+    my $rows = @untracked;
+    my $columns = 1;
+    if ($rows > 0) {
+        $columns = split /\s+/, $untracked[0];
+    }
+    foreach my $line (@untracked) {
+        my $id = $c;
+        $line =~ s/([\t ])(\S)/add_number(\$id, $1, $2, $rows)/ge;
+        $line =~ s/^ +//;
+        show_and_cache($line);
+        $c += 1;
+    }
+}
+
 close $git_status;
 close $cache;
+
+sub show_and_cache {
+    my ($line) = @_;
+    my $tocache = $line;
+    $tocache =~ s/{(\d+)}[\t ]{1,2}/\n$1\t/g;
+    $line =~ s/{(\d+)}/$1/g;
+    print $line;
+    $tocache =~ s/\e\[\d*m//g;
+    if ($untracked_in_columns) {
+        $tocache =~ s/\s*\n/\n/gms; # Trailing spaces from columnar formatting
+    }
+    print $cache $tocache;
+}
+
+sub add_number {
+    my ($nref, $space, $first_char, $incr) = @_;
+
+    my $num = $$nref;
+    if ($num < 10 && $space eq ' ') {
+        $num = "{$num} ";
+    } else {
+        $num = "{$num}";
+    }
+    my $str = "$normal$num$space$red$first_char";
+    $$nref += $incr;
+    return $str;
+}
