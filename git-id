@@ -102,10 +102,6 @@ if ($untracked_in_columns) {
     }
 
     my $rows = @untracked;
-    my $columns = 1;
-    if ($rows > 0) {
-        $columns = split /\s+/, $untracked[0];
-    }
     foreach my $line (@untracked) {
         my $id = $c;
         $line =~ s/([\t ])(\S)/add_number(\$id, $1, $2, $rows)/ge;
