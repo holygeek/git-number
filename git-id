@@ -63,6 +63,7 @@ print $cache "status-format: $status_format\n";
 print $cache "\n";
 
 my $seen_untracked = 0;
+my @untracked;
 my $c = 1;
 while (my $line = <$git_status>) {
     if ($line =~ /Untracked files:/) {
@@ -71,6 +72,7 @@ while (my $line = <$git_status>) {
 
     if ($status_style == $STATUS_DEFAULT) {
         if ($seen_untracked && $line =~ /\t/ && $untracked_in_columns) {
+            push @untracked, $line;
             last;
         }
 
@@ -91,10 +93,11 @@ while (my $line = <$git_status>) {
 }
 
 if ($untracked_in_columns) {
-    my @untracked;
+    my $seen_files = 0;
     my @the_rest;
     while (my $line = <$git_status>) {
         if ($line =~ /\t/) {
+            $seen_files = 1;
             push @untracked, $line;
         } else {
             push @the_rest, $line;
@@ -109,10 +112,12 @@ if ($untracked_in_columns) {
         show_and_cache($line);
         $c += 1;
     }
+    print join "", @the_rest;
 }
 
 close $git_status;
 close $cache;
+exit 0;
 
 sub show_and_cache {
     my ($line) = @_;

@@ -24,7 +24,7 @@ Scaffold::init();
   echo b > two.txt
   `;
   $expected = qr/#?1\s+one.txt\s+2\s+two.txt/;
-  $got = `cd $workdir; $srcdir/git-id --color=never --column`;
+  $got = `cd $workdir; $srcdir/git-id --color=never --column=always`;
   like($got, $expected, $testname); #:}
 }
 
