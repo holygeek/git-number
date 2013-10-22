@@ -7,7 +7,8 @@ git-number is a perl script that increases my command-line git productivity
 
 Here's how it increase my productivity (it might increase yours too):
 
-    $ alias gn='git number'
+    $ alias gn='git number --column'
+    # See item 4 in the Caveat section on --column
     $ alias ga='git number add'
 
     $ gn
@@ -133,6 +134,20 @@ filenames and passes them down to git.
     #
     $ gn reset 1  # this will NOT do what you want it to do!
 </pre>
+
+4.  Since git 1.8.4.1, git-status now defaults to showing the untracked files
+    in columnar listing (git-number doesn't).  To choose the columnar listing,
+    pass the --column argument to git-number.  git-number makes the assumption
+    that the files do not have spaces in their names and assign numeric ids to
+    the files by splitting the columnar output using one or more spaces as the
+    delimiter.
+
+    TLDR: git-number is not reliable in columnar untracked files
+    listing if your files have spaces in their names.
+
+5.  In --column=dense mode, there may be no spaces between the filenames from
+    the previous column and the numbers for the files in the next column.  Do
+    not be alarmed - the numbers work just fine.
 
 I'm sure there are a few more. Send me a patch :)
 
