@@ -123,7 +123,7 @@ filenames and passes them down to git.
 
 3. It does not work for renames:
 
-<pre>
+ <pre>
     $ git mv a.txt b.txt
     $ gn
     # On branch b
@@ -133,7 +133,7 @@ filenames and passes them down to git.
     #1      renamed:    a.txt -> b.txt
     #
     $ gn reset 1  # this will NOT do what you want it to do!
-</pre>
+ </pre>
 
 4.  Since git 1.8.4.1, git-status now defaults to showing the untracked files
     in columnar listing (git-number doesn't).  To choose the columnar listing,
