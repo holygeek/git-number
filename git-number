@@ -135,7 +135,7 @@ foreach my $arg (@ARGV) {
 }
 
 my $cmd = "$run " . join(' ', @args);
-if ( $converted ) {
+if (-t STDOUT && $converted) {
     print $cmd . "\n";
 }
 exit run_cmd($cmd);
