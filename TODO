@@ -1,1 +1,27 @@
-All done!
+- Ensure no space between filename and number.
+
+Do not want:
+
+  $ git number --column
+  On branch master
+  Your branch is up-to-date with 'github/master'.
+
+  Untracked files:
+    (use "git add <file>..." to include in what will be committed)
+
+  1       b2  c
+
+  nothing added to commit but untracked files present (use "git add" to track)
+
+Should be:
+
+  $ git number --column
+  On branch master
+  Your branch is up-to-date with 'github/master'.
+
+  Untracked files:
+    (use "git add <file>..." to include in what will be committed)
+
+  1       b 2 c
+
+  nothing added to commit but untracked files present (use "git add" to track)
