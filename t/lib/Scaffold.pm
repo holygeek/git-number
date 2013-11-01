@@ -13,7 +13,7 @@ BEGIN {
 }
 
 use FindBin;
-use File::Path qw/make_path remove_tree/;
+use File::Path qw/mkpath rmtree/;
 
 our $srcdir = "$FindBin::Bin/../";
 our $workdir = "$FindBin::Bin/testoutput";
@@ -21,7 +21,7 @@ our $workdir = "$FindBin::Bin/testoutput";
 $ENV{PATH} = "$srcdir:" . $ENV{PATH};
 
 sub init {
-	remove_tree($workdir);
-	my $ndir_created = make_path($workdir);
+	rmtree($workdir);
+	my $ndir_created = mkpath($workdir);
 	return $ndir_created;
 }
