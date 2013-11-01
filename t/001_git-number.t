@@ -83,7 +83,6 @@ like($got, $expected, $testname); #:}
 $testname = "git-number -c ls 1"; #{:
 `cd $workdir; $srcdir/git-number`;
 $expected = <<EOT;
-ls foo.txt
 foo.txt
 EOT
 $got = `cd $workdir; $srcdir/git-number -c ls 1`;
@@ -92,7 +91,6 @@ eq_or_diff($got, $expected, $testname); #:}
 $testname = "'git-number -c ...' in different dir than 'git-number' was invoked in"; #{:
 `cd $workdir; echo "Needle" > needle.txt; mkdir foo; cd foo; $srcdir/git-number`;
 $expected = <<EOT;
-cat needle.txt
 Needle
 EOT
 $got = `cd $workdir; $srcdir/git-number -c cat 2`;
