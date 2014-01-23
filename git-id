@@ -14,6 +14,7 @@ my $gitids = "$git_dir/gitids.txt";
 my $color = 'always';
 my $STATUS_DEFAULT = 0;
 my $STATUS_SHORT = 1;
+my $STATUS_BRANCH = 2;
 my $status_style = $STATUS_DEFAULT;
 my $status_opt = '';
 
@@ -28,6 +29,8 @@ while (scalar @ARGV && $ARGV[0] =~ /^-/) {
         }
     } elsif ($option eq '--short') {
         $status_style = $STATUS_SHORT;
+    } elsif ($option eq '--short-branch') {
+        $status_style = $STATUS_BRANCH;
     } elsif ($option =~ m{^-u(no|normal|all)$}) {
         $status_opt .= " $option";
     } elsif ($option =~ /^--column/) {
@@ -47,7 +50,7 @@ if (! $untracked_in_columns) {
     $status_opt .= " --column=never";
 }
 
-my @status_option_for = ( '', '--short' );
+my @status_option_for = ( '', '--short', '-sb' );
 my $status_format = $status_option_for[$status_style];
 my $git_cmd = "git -c color.status=$color status $status_opt $status_format "
               . join(' ', @ARGV);
@@ -84,6 +87,11 @@ while (my $line = <$git_status>) {
             $c += 1;
         }
     } elsif ($status_style == $STATUS_SHORT) {
+        if ($line !~ /^#/) {
+            $line =~ s/^/$c /;
+            $c += 1;
+        }
+    } elsif ($status_style == $STATUS_BRANCH) {
         if ($line !~ /^#/) {
             $line =~ s/^/$c /;
             $c += 1;
