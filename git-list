@@ -123,6 +123,24 @@ sub get_file_list {
                 }
             }
         },
+        '-sb' => sub {
+            while (my $line = <$cache>) {
+                next if $line !~ /^[0-9]+\s/;
+                chomp $line;
+                if (my ($number, $status, $filename)
+                        = $line =~ /^([0-9]+)\s+([^ ]+)\s+(.*)/) {
+
+                    if ($needfixdir) {
+                        $filename = fixdir($filename, $headers->{cwd}, $cwd);
+                    }
+                    push @file_list, {
+                            number => $number,
+                            status => $status,
+                            filename => $filename,
+                        };
+                }
+            }
+        },
     };
 
     my $status_format = $headers->{'status-format'};
