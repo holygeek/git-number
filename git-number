@@ -43,7 +43,7 @@ All arguments that follows <cmd> will be passed on to <cmd>.
 
 =item -s
 
-Shows I<git status> with the I<--short> option.
+Shows I<git status> with the I<--short --branch> option.
 
 =item -v
 

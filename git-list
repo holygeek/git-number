@@ -105,7 +105,7 @@ sub get_file_list {
                 }
             }
         },
-        '--short' => sub {
+        '--short --branch' => sub {
             while (my $line = <$cache>) {
                 next if $line !~ /^[0-9]+\s/;
                 chomp $line;

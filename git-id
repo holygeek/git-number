@@ -47,7 +47,7 @@ if (! $untracked_in_columns) {
     $status_opt .= " --column=never";
 }
 
-my @status_option_for = ( '', '--short' );
+my @status_option_for = ( '', '--short --branch' );
 my $status_format = $status_option_for[$status_style];
 my $git_cmd = "git -c color.status=$color status $status_opt $status_format "
               . join(' ', @ARGV);
