@@ -87,8 +87,14 @@ sub run_cmd {
 my $run = 'git';
 my $color = 'always';
 my $status_opt = '';
+my $passthru_args = '';
 while (scalar @ARGV && $ARGV[0] =~ /^-/) {
     my $option = shift @ARGV;
+    if ($option eq '--') {
+        $passthru_args = join(' ', @ARGV);
+        @ARGV = ();
+        last;
+    }
     if ($option eq '-h') {
         show_usage_and_exit();
     } elsif ($option eq '-v') {
@@ -116,13 +122,21 @@ if ($run eq 'git' && scalar @ARGV == 0) {
             "git-id",
             "--color=$color",
             "$status_opt",
+            "-- $passthru_args",
         );
     exit run_cmd($cmd);
 }
 
 my @args;
+
 my $converted=0;
-foreach my $arg (@ARGV) {
+while (scalar @ARGV) {
+    my $arg = shift @ARGV;
+    if ($arg eq '--') {
+        push(@args, @ARGV);
+        last;
+    }
+
     if ( $arg =~ m/^[0-9][0-9]*$/ ) {
         push @args, split("\n", `git-list $arg`);
         $converted=1;
