@@ -1,5 +1,41 @@
 #!/usr/bin/perl
 # vim: sts=4 sw=4 ts=4 expandtab:
+=pod
+
+=head1 NAME
+
+git-id
+
+=head1 DESCRIPTION
+
+Runs git-status and prepends numeric ids to filenames.
+
+=head1 SYNOPSIS
+
+    git-id
+
+=head1 OPTIONS
+
+=over 4
+
+=item -h
+
+Show this help message
+
+=item -s
+
+=item --column
+
+=item -u(no|normal|all)
+
+=item --color=(always|auto|never)
+
+These options are similar to git-status'.
+
+=back
+
+=cut
+
 use strict;
 use warnings;
 use Cwd;
