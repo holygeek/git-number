@@ -18,14 +18,11 @@ git-number
 
 =head1 DESCRIPTION
 
-When run without args:
+When run without arguments, runs git-status and assign numeric ids to filenames shown by git-status.
 
-Runs git-status and prepends numeric ids to filenames.
-
-When run with args:
-
-Runs <git-cmd> or <cmd>, and replaces any number it found in the args with the
-equivalent filename from the previous run of git-number.
+When run with arguments, runs <git-cmd> or <cmd>, and replaces any number in
+the arguments with the corresponding filename from the previous run of
+git-number.
 
 Any args given after `--' are passed to the underlying command verbatim.
 
@@ -57,6 +54,10 @@ Show this help message
 These options are similar to git-status'.
 
 =back
+
+=head1 SEE ALSO
+
+    git-id(1), git-list(1)
 
 =head1 VERSION
 

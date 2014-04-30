@@ -6,13 +6,13 @@
 
 git-id
 
-=head1 DESCRIPTION
-
-Runs git-status and prepends numeric ids to filenames.
-
 =head1 SYNOPSIS
 
     git-id
+
+=head1 DESCRIPTION
+
+Runs git-status and prepends numeric ids to filenames.
 
 =head1 OPTIONS
 
@@ -33,6 +33,10 @@ Show this help message
 These options are similar to git-status'.
 
 =back
+
+=head1 SEE ALSO
+
+    git-number(1), git-list(1)
 
 =cut
 

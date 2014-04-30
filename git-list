@@ -9,9 +9,13 @@ use Cwd qw/getcwd abs_path/;
 
 =pod
 
+=head1 NAME
+
+git-list
+
 =head1 SYNOPSIS
 
-git-list [-h] [number pattern]
+    git-list [-h] [number pattern]
 
 =head1 DESCRIPTION
 
@@ -27,6 +31,10 @@ printed as is.
 =head1 OPTIONS
 
     -h         Show this help message
+
+=head1 SEE ALSO
+
+    git-number(1), git-id(1)
 
 =cut
 
