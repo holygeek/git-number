@@ -14,18 +14,20 @@ git-number
 
 =head1 SYNOPSIS
 
-    git-number [-h|--color=<when>|-s] [<git-cmd|-c <cmd>> [git-or-cmd-options] [files or numbers]]
+    git-number [-h|--color=<when>|-s] [<git-cmd|-c <cmd>> [git-or-cmd-options] [files or numbers]] [-- ...]
 
 =head1 DESCRIPTION
 
 When run without args:
 
-Runs git-id and exit (numbers your files for git's consumption later)
+Runs git-status and prepends numeric ids to filenames.
 
 When run with args:
 
-Runs git, and replaces any number it found in the args with the equivalent
-filename from the previous run of git-number
+Runs <git-cmd> or <cmd>, and replaces any number it found in the args with the
+equivalent filename from the previous run of git-number.
+
+Any args given after `--' are passed to the underlying command verbatim.
 
 =head1 OPTIONS
 
