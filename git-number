@@ -33,19 +33,10 @@ Any args given after `--' are passed to the underlying command verbatim.
 
 =over 4
 
-=item --color=<when>
-
-Enable or disable colorized git-status output, E<lt>whenE<gt> is one of
-I<always>, I<auto> or I<never>. Default is I<always>.
-
 =item -c <cmd>
 
 Runs I<E<lt>cmdE<gt>> instead of git on the given arguments.
 All arguments that follows <cmd> will be passed on to <cmd>.
-
-=item -s
-
-Shows I<git status> with the I<--short> option.
 
 =item -v
 
@@ -54,6 +45,16 @@ Show version information
 =item -h
 
 Show this help message
+
+=item -s
+
+=item --column
+
+=item -u(no|normal|all)
+
+=item --color=(always|auto|never)
+
+These options are similar to git-status'.
 
 =back
 
