@@ -25,6 +25,11 @@ install-man: $(MANPAGES)
 	for s in $(MANPAGES); do \
 		install -m 0644 $$s $(mandir);\
 	done
+
+uninstall:
+	cd $(prefix)/bin && $(RM) $(SCRIPTS)
+	cd $(prefix)/man/man1 && $(RM) $(MANPAGES)
+
 test:
 	@prove t
 	
