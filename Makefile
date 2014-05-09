@@ -28,7 +28,7 @@ install-man: $(MANPAGES)
 
 uninstall:
 	cd $(prefix)/bin && $(RM) $(SCRIPTS)
-	cd $(prefix)/man/man1 && $(RM) $(MANPAGES)
+	cd $(mandir) && $(RM) $(MANPAGES)
 
 test:
 	@prove t
