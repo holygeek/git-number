@@ -15,9 +15,9 @@ install: install-man
 
 git-number.1: git-number
 	pod2man $< $@
-git-id.1: git-number
+git-id.1: git-id
 	pod2man $< $@
-git-list.1: git-number
+git-list.1: git-list
 	pod2man $< $@
 
 install-man: $(MANPAGES)
