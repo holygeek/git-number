@@ -4,7 +4,7 @@ testdir = t/testoutput
 SCRIPTS = git-number git-id git-list
 
 bindir = $(prefix)/bin
-mandir = $(prefix)/man/man1
+mandir = $(prefix)/share/man/man1
 MANPAGES = $(addsuffix .1,$(SCRIPTS))
 
 all: test clean
