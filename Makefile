@@ -13,18 +13,12 @@ install: install-man
 	install -d -m 0755 $(bindir)
 	install -m 0755 $(SCRIPTS) $(bindir)
 
-git-number.1: git-number
-	pod2man $< $@
-git-id.1: git-id
-	pod2man $< $@
-git-list.1: git-list
+$(MANPAGES): %.1 : %
 	pod2man $< $@
 
 install-man: $(MANPAGES)
 	install -d -m 0755 $(mandir)
-	for s in $(MANPAGES); do \
-		install -m 0644 $$s $(mandir);\
-	done
+	install -m 0644 $(MANPAGES) $(mandir)
 
 uninstall:
 	cd $(prefix)/bin && $(RM) $(SCRIPTS)
