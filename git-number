@@ -148,6 +148,9 @@ while (scalar @ARGV) {
         push @args, split("\n", `git-list $arg`);
         $converted=1;
     } else {
+        if (index($arg, ' ') != -1) {
+            $arg = ("\"" . $arg . "\"");
+        }
         push @args, $arg;
     }
 }
