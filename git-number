@@ -149,7 +149,7 @@ while (scalar @ARGV) {
         $converted=1;
     } else {
         if (index($arg, ' ') != -1) {
-            $arg = ("\"" . $arg . "\"");
+            $arg = "\"$arg\"";
         }
         push @args, $arg;
     }
