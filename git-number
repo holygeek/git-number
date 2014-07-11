@@ -92,7 +92,7 @@ my $run = 'git';
 my $color = 'always';
 my $status_opt = '';
 my $passthru_args = '';
-while (scalar @ARGV && $ARGV[0] =~ /^-/) {
+while (scalar @ARGV && $ARGV[0] =~ /^-[^0-9]/) {
     my $option = shift @ARGV;
     if ($option eq '--') {
         $passthru_args = join(' ', @ARGV);
@@ -145,6 +145,12 @@ while (scalar @ARGV) {
         push @args, split("\n", `git-list $arg`);
         $converted=1;
     } elsif ( $arg =~ m/^[0-9][0-9]*-[0-9][0-9]*$/ ) {
+        push @args, split("\n", `git-list $arg`);
+        $converted=1;
+    } elsif ( $arg =~ m/^-[0-9][0-9]*$/ ) {
+        push @args, split("\n", `git-list $arg`);
+        $converted=1;
+    } elsif ( $arg =~ m/^[0-9][0-9]*-$/ ) {
         push @args, split("\n", `git-list $arg`);
         $converted=1;
     } else {
