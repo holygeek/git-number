@@ -25,3 +25,5 @@ Should be:
   1       b 2 c
 
   nothing added to commit but untracked files present (use "git add" to track)
+
+- Ignored files shown by "git status --ignored" is not shown by "git number -- ignored"
