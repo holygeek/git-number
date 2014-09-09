@@ -157,7 +157,7 @@ sub get_file_ids {
     my %file_for;
     foreach my $entry (@file_list) {
         my $filename = $entry->{filename};
-        if ($filename =~ / /) {
+        if ($filename =~ /[ ()]/) {
             $filename = '"' . $filename . '"';
         }
         $file_for{$entry->{number}} = $filename;
