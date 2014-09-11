@@ -157,7 +157,12 @@ sub get_file_ids {
     my %file_for;
     foreach my $entry (@file_list) {
         my $filename = $entry->{filename};
-        if ($filename =~ /[ ()]/) {
+        # First we escape characters that need escaping
+        if ($filename =~ /[`\$"]/) {
+            $filename =~ s/([`\$"])/\\$1/g;
+        }
+        # Then we double-quote the name if necessary
+        if ($filename =~ /[ '\[\]()]/) {
             $filename = '"' . $filename . '"';
         }
         $file_for{$entry->{number}} = $filename;
