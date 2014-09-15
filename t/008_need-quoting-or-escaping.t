@@ -25,3 +25,4 @@ file with spaces.txt
 [square]brackets.txt
 backtick`.txt
 dollar$ign.txt
+background&.txt
