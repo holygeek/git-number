@@ -14,7 +14,8 @@ git-number
 
 =head1 SYNOPSIS
 
-    git-number [-h|--color=<when>|-s] [<git-cmd|-c <cmd>> [git-or-cmd-options] [files or numbers]] [-- ...]
+    git-number [-h|--color=<when>|-s|-Ustring] [<git-cmd|-c <cmd>> \
+	[git-or-cmd-options] [files or numbers]] [-- ...]
 
 =head1 DESCRIPTION
 
@@ -24,7 +25,8 @@ When run with arguments, runs <git-cmd> or <cmd>, and replaces any number in
 the arguments with the corresponding filename from the previous run of
 git-number.
 
-Any args given after `--' are passed to the underlying command verbatim.
+Any args given after `--' (or the string specified by the -Ustring option) are passed
+to the underlying command verbatim.
 
 =head1 OPTIONS
 
@@ -42,6 +44,10 @@ Show version information
 =item -h
 
 Show this help message
+
+=item -Ustring
+
+Use the given string as the stop marker instead of the default '--'.
 
 =item -s
 
@@ -92,9 +98,10 @@ my $run = 'git';
 my $color = 'always';
 my $status_opt = '';
 my $passthru_args = '';
+my $stop_marker='--';
 while (scalar @ARGV && $ARGV[0] =~ /^-/) {
     my $option = shift @ARGV;
-    if ($option eq '--') {
+    if ($option eq $stop_marker) {
         $passthru_args = join(' ', @ARGV);
         @ARGV = ();
         last;
@@ -115,6 +122,8 @@ while (scalar @ARGV && $ARGV[0] =~ /^-/) {
         $status_opt .= " $option";
     } elsif ($option =~ m{^--column}) {
         $status_opt .= " $option";
+	} elsif ($option =~ m{^-U([^ ]+)}) {
+		$stop_marker = $1;
     } else {
         print "Unknown option: $option\n";
         exit 1;
@@ -136,7 +145,7 @@ my @args;
 my $converted=0;
 while (scalar @ARGV) {
     my $arg = shift @ARGV;
-    if ($arg eq '--') {
+    if ($arg eq $stop_marker) {
         push(@args, @ARGV);
         last;
     }
