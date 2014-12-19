@@ -79,11 +79,6 @@ sub run_cmd {
     if ($? == -1) {
         print STDERR "$me: $!\n";
         return 1;
-    } elsif ($? & 127) {
-        printf STDERR "$me: child died with signal %d, %s coredump\n",
-        ($? & 127),  ($? & 128) ? 'with' : 'without';
-
-        return 1;
     }
     return $? >> 8;
 }
