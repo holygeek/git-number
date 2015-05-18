@@ -87,7 +87,10 @@ my $run = 'git';
 my $color = 'always';
 my $status_opt = '';
 my $passthru_args = '';
-$ARGV[-1] = '--', push @ARGV, '.' if $ARGV[-1] && $ARGV[-1] eq '.';
+if (grep(/^--$/, @ARGV) == 0 && $ARGV[-1] && $ARGV[-1] eq '.') {
+    $ARGV[-1] = '--';
+    push @ARGV, '.';
+}
 while (scalar @ARGV && $ARGV[0] =~ /^-/) {
     my $option = shift @ARGV;
     if ($option eq '--') {
