@@ -156,6 +156,10 @@ I'm sure there are a few more. Send me a patch :)
 Copy (or make a symbolic link to) 'git-number', 'git-list', 'git-id' into your
 $HOME/bin directory, or wherever you prefer to put them.
 
+## Installation on Windows ##
+
+Add folder where 'git-number', 'git-list', 'git-id' are located to your $PATH variable and restart git console.
+
 ## See also ##
 
 [scm_breeze](https://github.com/ndbroadbent/scm_breeze) by Nathan Broadbent -  similar in spirit with git-number, has more features, requires either bash or zsh.
