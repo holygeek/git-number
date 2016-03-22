@@ -165,7 +165,7 @@ sub show_and_cache {
     $tocache =~ s/{(\d+)}[\t ]{1,2}/\n$1\t/g;
     $line =~ s/{(\d+)}/$1/g;
     print $line;
-    $tocache =~ s/\e\[\d*m//g;
+    $tocache =~ s/\e\[(\d*(;\d*)*)m//g;
     if ($untracked_in_columns) {
         $tocache =~ s/\s*\n/\n/gms; # Trailing spaces from columnar formatting
     }
