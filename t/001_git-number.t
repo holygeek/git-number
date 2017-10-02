@@ -59,7 +59,7 @@ git reset --hard
 
 # This is the price you pay when scripting against porcelain:
 my $expected_regex = qr/(# )?On branch master
-nothing to commit,? \(?working directory clean\)?
+(nothing to commit|Nothing to commit),? \(?working (directory|tree) clean\)?
 /;
 # In git 1.7, it was    "nothing to commit (working directory clean)"
 # In git 1.8, it became "nothing to commit, working directory clean"

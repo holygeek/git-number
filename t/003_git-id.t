@@ -18,7 +18,7 @@ cd $workdir &&
 git init
 `;
 $got = `cd $workdir; $srcdir/git-id 2>&1`;
-$expected = qr/(# )?On branch master\n#?\n(# )?Initial commit\n#?\nnothing to commit \(create\/copy files and use "git add" to track\)/;
+$expected = qr/(# )?On branch master\n#?\n(# )?(Initial commit|No commits yet)(\n#?\n| )nothing to commit \(create\/copy files and use "git add" to track\)/;
 like($got, $expected, $testname); #:}
 
 $testname = 'git-id - untracked files'; #{:
