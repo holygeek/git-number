@@ -24,7 +24,7 @@ Scaffold::init();
   $srcdir/git-number commit -m "Initial commit"
   `;
   $expected = "Initial commit";
-  chomp($got = `cd $workdir/tmp && git log -1 --format=%s`);
+  chomp($got = `cd $workdir/tmp && git log -1 --format=%s && cd .. && rm -rf tmp`);
   eq_or_diff($got, $expected, $testname); #:}
 }
 
