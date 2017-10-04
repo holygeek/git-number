@@ -19,6 +19,10 @@ our $srcdir = "$FindBin::Bin/../";
 our $workdir = "$FindBin::Bin/testoutput";
 
 $ENV{PATH} = "$srcdir:" . $ENV{PATH};
+$ENV{GIT_AUTHOR_EMAIL} = 'author@example.com';
+$ENV{GIT_AUTHOR_NAME} = 'A. U. Thor';
+$ENV{GIT_COMMITTER_EMAIL} = 'author@example.com';
+$ENV{GIT_COMMITTER_NAME} = 'A. U. Thor';
 
 sub init {
 	rmtree($workdir);
