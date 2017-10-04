@@ -61,9 +61,9 @@ These options are similar to git-status'.
 
 =head1 VERSION
 
-1.0
+1.0.1
 =cut
-my $VERSION = '1.0'; # Don't forget to update the one in pod!
+my $VERSION = '1.0.1'; # Don't forget to update the one in pod!
 
 my $me = basename(__FILE__);
 sub show_usage_and_exit {
