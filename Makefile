@@ -21,7 +21,7 @@ install-man: $(MANPAGES)
 	install -m 0644 $(MANPAGES) $(mandir)
 
 uninstall:
-	cd $(prefix)/bin && $(RM) $(SCRIPTS)
+	cd $(bindir) && $(RM) $(SCRIPTS)
 	cd $(mandir) && $(RM) $(MANPAGES)
 
 test:
