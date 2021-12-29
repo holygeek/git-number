@@ -27,7 +27,7 @@ cd ../b &&
   echo 'Sub project' > b.txt &&
   git add . && git commit -m 'initial commit b' &&
 cd ../a &&
-  git submodule add ../b b &&
+  git submodule -q add ../b b &&
   git commit -m 'Added ../b as submodule in b' &&
 cd b &&
   echo 'Added new line' >> b.txt
