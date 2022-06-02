@@ -142,17 +142,17 @@ filenames and passes them down to git.
 
 3. It does not work for renames:
 
-```console
-$ git mv a.txt b.txt
-$ gn
-# On branch b
-# Changes to be committed:
-#   (use "git reset HEAD <file>..." to unstage)
-#
-#1      renamed:    a.txt -> b.txt
-#
-$ gn reset 1  # this will NOT do what you want it to do!
-```
+    ```console
+    $ git mv a.txt b.txt
+    $ gn
+    # On branch b
+    # Changes to be committed:
+    #   (use "git reset HEAD <file>..." to unstage)
+    #
+    #1      renamed:    a.txt -> b.txt
+    #
+    $ gn reset 1  # this will NOT do what you want it to do!
+    ```
 
 4.  Since git 1.8.4.1, git-status now defaults to showing the untracked files
     in columnar listing (git-number doesn't).  To choose the columnar listing,
