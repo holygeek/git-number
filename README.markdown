@@ -1,11 +1,11 @@
 ### git-number ###
 
-git-number is a perl script that increases my command-line git productivity
+`git-number` is a perl script that increases my command-line git productivity
 (with some help from another two perl scripts).
 
 ## Usage Examples ##
 
-Here's how it increase my productivity (it might increase yours too):
+Here's how it increases my productivity (and might increase yours, too):
 
     $ alias gn='git number --column'
     # See item 4 in the Caveat section on --column
@@ -23,8 +23,8 @@ Here's how it increase my productivity (it might increase yours too):
 Does the output look familiar? Notice the numbers before the filenames? Those
 are their ids.
 
-If you prefer the short status format then you can use the -s option.  This
-will run ``git status`` with the ``--short`` option.
+If you prefer the short status format then you can use the `-s` option. This
+will run `git status` with the `--short` option.
 
     $ git number -s
     1 ?? .README.swp
@@ -48,13 +48,13 @@ Now look at this:
     #
     #2      .README.swp
 
-When run without arguments, 'git number' runs 'git status' and attach a unique
-number for each line of filename printed by 'git status', and it will 'remember'
+When run without arguments, `git number` runs `git status` and attach a unique
+number for each line of filename printed by `git status`, and it will 'remember'
 this number-to-filename association. When run with arguments, like this:
 
     $ git number <any git command> [one or more numbers or git options/args]
 
-'git number' will run that &lt;any git command&gt; and subtitute all the numbers
+`git number` will run that &lt;any git command&gt; and subtitute all the numbers
 to their equivalent filenames. Non-numeric argument are passed intact to git.
 
 It accepts multiple args and ranges too:
@@ -65,25 +65,25 @@ Which is the same as writing
 
     $ ga 2 3 4 6 10
 
-You can also ask git-number to run arbitrary command instead of git on the
-given arguments using the -c option:
+You can also ask `git-number` to run arbitrary command instead of git on the
+given arguments using the `-c` option:
 
     $ gn -c rm 1
 
-This will run the command "rm README"
+This will run the command `rm README`
 
 The kind of fun that this gives you include the following:
 
     $ alias vn='git number -c vi'
     $ vn 1
 
-This will run "vi README"
+This will run `vi README`
 
 ## What's included ##
 
-1. git-number: Show or operate on files by their 'ids'
-2. git-list: List filenames from given ids
-3. git-id: Generate and show the file ids
+1. `git-number`: Show or operate on files by their ids.
+2. `git-list`: List filenames from given ids.
+3. `git-id`: Generate and show the file ids.
 
     for example to show the second file run:
 
@@ -99,18 +99,18 @@ Batteries.
 
 ## How it works ##
 
-'git-id' is a perl script that does two things:
+`git-id` is a perl script that does two things:
 
-1. Runs "git status" and inserts a number before each file reported by "git
-   status"
+1. Runs `git status` and inserts a number before each file reported by `git
+   status`
 2. Show and save a copy of the output to a file (.git/gitids.txt)
 
 (If you're pedantic then it does four things)
 
-'git-list' is a perl script that converts numbers and ranges to their
-equivalent filenames from the previous run of 'git-id'.
+`git-list` is a perl script that converts numbers and ranges to their
+equivalent filenames from the previous run of `git-id`.
 
-'git-number' uses 'git-list' to convert all its numbers and ranges arguments to
+`git-number` uses `git-list` to convert all its numbers and ranges arguments to
 filenames and passes them down to git.
 
 ## Caveat ##
@@ -153,13 +153,16 @@ I'm sure there are a few more. Send me a patch :)
 
 ## Installation ##
 
-Copy (or make a symbolic link to) 'git-number', 'git-list', 'git-id' into your
+Copy (or make a symbolic link to) `git-number`, `git-list`, `git-id` into your
 $HOME/bin directory, or wherever you prefer to put them.
 
 ## Installation on Windows ##
 
-Add folder where 'git-number', 'git-list', 'git-id' are located to your $PATH variable and restart git console.
+Add folder where `git-number`, `git-list`, `git-id` are located to your
+$PATH variable and restart git console.
 
 ## See also ##
 
-[scm_breeze](https://github.com/ndbroadbent/scm_breeze) by Nathan Broadbent -  similar in spirit with git-number, has more features, requires either bash or zsh.
+[scm_breeze](https://github.com/ndbroadbent/scm_breeze) by Nathan
+Broadbent - similar in spirit with git-number, has more features,
+requires either bash or zsh.
