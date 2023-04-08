@@ -136,7 +136,7 @@ my $converted=0;
 while (scalar @ARGV) {
     my $arg = shift @ARGV;
     if ($arg eq '--') {
-        push(@args, @ARGV);
+        push(@args, '--', @ARGV);
         last;
     }
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env perl
 use strict;
 use warnings;
-use Test::More tests => 10;
+use Test::More tests => 11;
 
 use lib 't/lib';
 use Scaffold qw/$workdir $srcdir/;
@@ -101,6 +101,19 @@ $expected = <<EOT;
 
 EOT
 $got=`git-number -c echo`;
+eq_or_diff($got, $expected, $testname); #:}
+
+$testname = "retain -- in command line arg"; #{:
+`
+cd $workdir &&
+echo third > third.txt &&
+git add third.txt &&
+git commit -m 'add third.txt' &&
+git rm third.txt &&
+git commit -m 'remove third.txt'
+`;
+$expected = "remove third.txt\n";
+$got = `cd $workdir; $srcdir/git-number log -1 --format=%s -- third.txt`;
 eq_or_diff($got, $expected, $testname); #:}
 
 # vim:fdm=marker foldmarker={\:,\:}: commentstring=\ #%s
