@@ -14,7 +14,7 @@ git-number
 
 =head1 SYNOPSIS
 
-    git-number [-h|--color=<when>|-s] [<git-cmd|-c <cmd>> [git-or-cmd-options] [files or numbers]] [-- ...]
+    git-number [-h|--color=<when>|-s] [<git-cmd|-c <cmd>> [git-or-cmd-options] [files or numbers]] [[--|---] ...]
 
 =head1 DESCRIPTION
 
@@ -24,7 +24,14 @@ When run with arguments, runs <git-cmd> or <cmd>, and replaces any number in
 the arguments with the corresponding filename from the previous run of
 git-number.
 
-Any args given after `--' are passed to the underlying command verbatim.
+Any arguments given after `--' are passed to the underlying command verbatim,
+including the `--`. Numbers following `--` are left intact. To replace numbers
+with their equivalent filenames after `--`, use triple-dash `---` inplace of
+`--`. For example:
+
+    $ git number log -- 1   # runs git log -- 1
+    $ git number log --- 1  # runs git log -- <filename associated with 1>
+
 
 =head1 OPTIONS
 
