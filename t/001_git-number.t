@@ -1,7 +1,7 @@
 #!/usr/bin/env perl
 use strict;
 use warnings;
-use Test::More tests => 11;
+use Test::More tests => 12;
 
 use lib 't/lib';
 use Scaffold qw/$workdir $srcdir/;
@@ -115,5 +115,17 @@ git commit -m 'remove third.txt'
 $expected = "remove third.txt\n";
 $got = `cd $workdir; $srcdir/git-number log -1 --format=%s -- third.txt`;
 eq_or_diff($got, $expected, $testname); #:}
+
+$testname = "recognize numbers after two dashes -- with triple dashes ---"; #{:
+`
+cd $workdir &&
+git clean -f &&
+touch third.txt
+git number
+`;
+$got = `cd $workdir && $srcdir/git-number log -1 --format=%s --- 1`;
+$expected = "remove third.txt\n";
+eq_or_diff($got, $expected, $testname);
+#:}
 
 # vim:fdm=marker foldmarker={\:,\:}: commentstring=\ #%s

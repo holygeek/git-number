@@ -140,6 +140,11 @@ while (scalar @ARGV) {
         last;
     }
 
+    if ($arg eq '---') {
+        push(@args, '--');
+        next;
+    }
+
     if ( $arg =~ m/^[0-9][0-9]*$/ ) {
         push @args, split("\n", `git-list $arg`);
         $converted=1;
