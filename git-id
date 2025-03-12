@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 # vim: sts=4 sw=4 ts=4 expandtab:
 =pod
 
