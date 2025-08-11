@@ -22,6 +22,10 @@ Runs git-status and prepends numeric ids to filenames.
 
 Show this help message
 
+=item -l
+
+Show current ids
+
 =item -s
 
 =item --column
@@ -56,6 +60,7 @@ my $STATUS_DEFAULT = 0;
 my $STATUS_SHORT = 1;
 my $status_style = $STATUS_DEFAULT;
 my $status_opt = '';
+my $list_ids = 0;
 
 my $untracked_in_columns = 0;
 while (scalar @ARGV && $ARGV[0] =~ /^-/) {
@@ -77,10 +82,24 @@ while (scalar @ARGV && $ARGV[0] =~ /^-/) {
             $untracked_in_columns = 1;
         }
         $status_opt .= " $option";
+    } elsif ($option eq '-l') {
+        $list_ids = 1;
     } else {
         print "Unknown option: $option\n";
         exit 1;
     }
+}
+
+if ($list_ids) {
+    my $encoding = ":encoding(UTF-8)";
+    my $handle   = undef;     # this will be filled in on success
+
+    open($handle, "< $encoding", $gitids)
+        or die "Error: $!";
+    while (<$handle>) {
+        print $_;
+    }
+    exit 0;
 }
 
 if (! $untracked_in_columns) {
