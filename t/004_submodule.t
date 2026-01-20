@@ -21,14 +21,14 @@ mkdir a b &&
 cd a &&
   git init &&
   echo 'Super project' > a.txt &&
-  git add . && git commit -m 'initial commit a' &&
+  git add . && git commit --no-verify -m 'initial commit a' &&
 cd ../b &&
   git init &&
   echo 'Sub project' > b.txt &&
-  git add . && git commit -m 'initial commit b' &&
+  git add . && git commit --no-verify -m 'initial commit b' &&
 cd ../a &&
   git -c protocol.file.allow=always submodule -q add ../b b &&
-  git commit -m 'Added ../b as submodule in b' &&
+  git commit --no-verify -m 'Added ../b as submodule in b' &&
 cd b &&
   echo 'Added new line' >> b.txt
 `;

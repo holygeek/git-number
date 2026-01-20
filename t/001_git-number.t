@@ -53,7 +53,7 @@ like($got, $expected, $testname); #:}
 $testname = "Status after commit and reset --hard"; #{:
 `
 cd $workdir &&
-git commit -m 'initial commit' &&
+git commit --no-verify -m 'initial commit' &&
 git reset --hard
 `;
 
@@ -108,9 +108,9 @@ $testname = "retain -- in command line arg"; #{:
 cd $workdir &&
 echo third > third.txt &&
 git add third.txt &&
-git commit -m 'add third.txt' &&
+git commit --no-verify -m 'add third.txt' &&
 git rm third.txt &&
-git commit -m 'remove third.txt'
+git commit --no-verify -m 'remove third.txt'
 `;
 $expected = "remove third.txt\n";
 $got = `cd $workdir; $srcdir/git-number log -1 --format=%s -- third.txt`;
