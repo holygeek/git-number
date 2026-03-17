@@ -17,7 +17,7 @@ sub test_quoting {
       # echo \"# \$filename\" >&2
       echo foo > \"\$filename\"
     done &&
-    $srcdir/git-id &&
+    git id &&
     $srcdir/git-number add 1-$nfiles";
   `$cmd`;
   my $expected = $need_quoting;

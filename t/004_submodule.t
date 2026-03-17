@@ -38,9 +38,9 @@ $expected = qr/#?1\tmodified:   b \(modified content\)\n.*no changes added to co
 $got = `cd $workdir/a; $srcdir/git-number --color=never`;
 like($got, $expected, $testname);
 
-$testname = "Get name of modified submodule using git-list";
+$testname = "Get name of modified submodule using git list";
 $expected = 'b';
-$got = `cd $workdir/a; $srcdir/git-list 1`;
+$got = `cd $workdir/a; git list 1`;
 chomp $got;
 eq_or_diff($got, $expected, $testname);
 #}

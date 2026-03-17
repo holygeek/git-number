@@ -22,6 +22,7 @@ our $srcdir = "$FindBin::Bin/../";
 our $workdir = "$FindBin::Bin/testoutput";
 
 $ENV{PATH} = "$srcdir:" . $ENV{PATH};
+$ENV{GIT_CONFIG_PARAMETERS} = "'alias.id=number id' 'alias.list=number list'";
 $ENV{GIT_AUTHOR_EMAIL} = 'author@example.com';
 $ENV{GIT_AUTHOR_NAME} = 'A. U. Thor';
 $ENV{GIT_COMMITTER_EMAIL} = 'author@example.com';

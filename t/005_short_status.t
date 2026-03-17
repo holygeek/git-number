@@ -27,8 +27,8 @@ $expected = <<EOT;
 EOT
 eq_or_diff($got, $expected, $testname); #:}
 
-$testname = "git-list: Handle short status"; #{:
-$got = `cd $workdir; $srcdir/git-list 1`;
+$testname = "git list: Handle short status"; #{:
+$got = `cd $workdir; git list 1`;
 $expected = <<EOT;
 one.txt
 EOT

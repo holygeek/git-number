@@ -1,31 +1,24 @@
 prefix = /usr/local
 testdir = t/testoutput
 
-SCRIPTS = git-number git-id git-list
+BINARY = git-number
 
 bindir = $(prefix)/bin
-mandir = $(prefix)/share/man/man1
-MANPAGES = $(addsuffix .1,$(SCRIPTS))
 
-all: test clean
+all: build test
 
-install: install-man
+build:
+	go build -o $(BINARY)
+
+install: build
 	install -d -m 0755 $(bindir)
-	install -m 0755 $(SCRIPTS) $(bindir)
-
-$(MANPAGES): %.1 : %
-	pod2man $< $@
-
-install-man: $(MANPAGES)
-	install -d -m 0755 $(mandir)
-	install -m 0644 $(MANPAGES) $(mandir)
+	install -m 0755 $(BINARY) $(bindir)
 
 uninstall:
-	cd $(bindir) && $(RM) $(SCRIPTS)
-	cd $(mandir) && $(RM) $(MANPAGES)
+	$(RM) $(bindir)/$(BINARY)
 
-test:
+test: build
 	@prove t
 	
 clean:
-	$(RM) -r $(testdir) $(MANPAGES)
+	$(RM) -r $(testdir) $(BINARY)

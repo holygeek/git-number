@@ -34,6 +34,6 @@ echo 'untracked1' > untracked1.txt &&
     git config color.status.untracked 'red bold' &&
     $srcdir/git-number --color=always
 `;
-$got = `cd $workdir; $srcdir/git-list 2`;
+$got = `cd $workdir; git list 2`;
 $expected = "untracked1.txt\n";
 eq_or_diff($got, $expected, $testname); #:}

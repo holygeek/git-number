@@ -1,19 +1,28 @@
 ### git-number ###
 
-`git-number` is a perl script that increases my command-line git productivity
-(with some help from another two perl scripts).
-
+`git-number` is a Go program that increases my command-line git productivity.
 ## Usage Examples ##
 
 Here's how it increases my productivity (and might increase yours, too):
 
+Initial setup
 ```console
-$ alias gn='git number --column'
-# See item 4 in the Caveat section on --column
-$ alias ga='git number add'
+# set up `git id` and `git list` as shortcuts for `git number id` and `git number list`
+git number --set-git-alias
 
-$ gn
+# set shell aliases
+alias g='git number --column'
+alias ga='git number add'
+alias gd='git number diff'
+alias ge='git number -c'
+# See item 4 in the Caveat section on --column
+```
+
+Use it
+```
+$ g
 # On branch master
+
 # Untracked files:
 #   (use "git add <file>..." to include in what will be committed)
 #
@@ -38,9 +47,9 @@ Now look at this:
 
 ```console
 $ ga 2
-git add  README  # <- It does this in the background
+git add README  # <- It does this in the background
 
-$ gn
+$ g
 # On branch master
 # Changes to be committed:
 #   (use "git reset HEAD <file>..." to unstage)
@@ -80,7 +89,7 @@ You can also ask `git-number` to run arbitrary command instead of git on the
 given arguments using the `-c` option:
 
 ```console
-$ gn -c rm 1
+$ g -c rm 1
 ```
 
 This will run the command `rm README`
@@ -94,22 +103,22 @@ $ vn 1
 
 This will run `vi README`
 
-## What's included ##
+## Subcommands ##
 
-1. `git-number`: Show or operate on files by their ids.
-2. `git-list`: List filenames from given ids.
-3. `git-id`: Generate and show the file ids.
+1. `git number id`: Runs `git status` and assigns numeric IDs to filenames.
+   (This is what runs when `git number` is called without arguments).
+2. `git number list`: Lists filenames associated with the given IDs.
 
-    for example to show the second file run:
+    For example to show the second file run:
 
     ```console
-    $ git list 2
+    $ git number list 2
     ```
 
-    or to show the first three files, and the  9th and 13th:
+    or to show the first three files, and the 9th and 13th:
 
     ```console
-    $ git list 1-3 9 13
+    $ git number list 1-3 9 13
     ```
 
 ## What's not included ##
@@ -118,19 +127,12 @@ Batteries.
 
 ## How it works ##
 
-`git-id` is a perl script that does two things:
+When you run `git number` (or `git number id`), it:
+1. Runs `git status` and inserts a number before each file reported.
+2. Saves a copy of the output and metadata to `.git/gitids.txt`.
 
-1. Runs `git status` and inserts a number before each file reported by `git
-   status`
-2. Show and save a copy of the output to a file (.git/gitids.txt)
-
-(If you're pedantic then it does four things)
-
-`git-list` is a perl script that converts numbers and ranges to their
-equivalent filenames from the previous run of `git-id`.
-
-`git-number` uses `git-list` to convert all its numbers and ranges arguments to
-filenames and passes them down to git.
+When you run a command through `git number`, it uses the information in
+`.git/gitids.txt` to convert numbers and ranges back to their equivalent filenames.
 
 ## Caveat ##
 
@@ -144,14 +146,14 @@ filenames and passes them down to git.
 
     ```console
     $ git mv a.txt b.txt
-    $ gn
+    $ g
     # On branch b
     # Changes to be committed:
     #   (use "git reset HEAD <file>..." to unstage)
     #
     #1      renamed:    a.txt -> b.txt
     #
-    $ gn reset 1  # this will NOT do what you want it to do!
+    $ g reset 1  # this will NOT do what you want it to do!
     ```
 
 4.  Since git 1.8.4.1, git-status now defaults to showing the untracked files
@@ -172,13 +174,17 @@ I'm sure there are a few more. Send me a patch :)
 
 ## Installation ##
 
-Copy (or make a symbolic link to) `git-number`, `git-list`, `git-id` into your
-$HOME/bin directory, or wherever you prefer to put them.
+1. Install it:
+   ```console
+   $ go install github.com/holygeek/git-number@latest
+   ```
+   Make sure `$GOPATH/bin` (usually `$HOME/go/bin`) is in your `$PATH`.
 
-## Installation on Windows ##
-
-Add folder where `git-number`, `git-list`, `git-id` are located to your
-$PATH variable and restart git console.
+2. Set up git aliases (optional but recommended):
+   ```console
+   $ git number --set-git-alias
+   ```
+   This sets up `git id` and `git list` as shortcuts for `git number id` and `git number list`.
 
 ## See also ##
 
