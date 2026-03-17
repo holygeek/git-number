@@ -2,7 +2,8 @@ package Scaffold;
 use Exporter 'import';
 @EXPORT_OK = qw($workdir $srcdir);
 
-BEGIN {
+sub import {
+	my ($class, @args) = @_;
 	my $package = caller();
 	no strict 'refs';
 	if (! eval q{use Test::Differences; 1}) {
@@ -10,6 +11,8 @@ BEGIN {
 	} else {
 		*{"${package}::eq_or_diff"} = \&Test::Differences::eq_or_diff;
 	}
+	@_ = ($class, @args);
+	goto &Exporter::import;
 }
 
 use FindBin;
