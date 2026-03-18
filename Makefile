@@ -5,7 +5,7 @@ BINARY = git-number
 
 bindir = $(prefix)/bin
 
-all: build test
+all: build tests
 
 build:
 	go build -o $(BINARY)
@@ -20,5 +20,8 @@ uninstall:
 test: build
 	@prove t
 	
+tests: build
+	@prove tests
+
 clean:
 	$(RM) -r $(testdir) $(BINARY)
