@@ -427,69 +427,136 @@ SEE ALSO
 
 	id := 1
 	seenUntracked := false
-	untrackedStart := -1
+	var untrackedLines []string
+	var otherLines []string
 
 	for i := 0; i < len(lines); i++ {
 		line := lines[i]
 		if strings.Contains(line, "Untracked files:") {
 			seenUntracked = true
-			untrackedStart = i
 		}
 
-		processedLine := line
 		if statusStyle == "default" {
-			if seenUntracked && untrackedInColumns && i > untrackedStart+1 {
-				// Columnar untracked files
-				reFile := regexp.MustCompile(`\s+(\S+)`)
-				matches := reFile.FindAllStringSubmatchIndex(line, -1)
-				if len(matches) > 1 {
-					newLine := ""
-					lastIdx := 0
-					for _, m := range matches {
-						newLine += line[lastIdx:m[0]] + fmt.Sprintf("%d\t", id) + line[m[0]+1:m[1]]
-						id++
-						lastIdx = m[1]
+			// git-id.pl:
+			// if ($seen_untracked && $line =~ /\t/ && $untracked_in_columns) {
+			//     push @untracked, $line;
+			//     last;
+			// }
+			if seenUntracked && untrackedInColumns && strings.Contains(line, "\t") {
+				// Buffer all CONSECUTIVE lines that have tabs
+				j := i
+				for ; j < len(lines); j++ {
+					if strings.Contains(lines[j], "\t") {
+						untrackedLines = append(untrackedLines, lines[j])
+					} else {
+						break
 					}
-					newLine += line[lastIdx:]
-					processedLine = newLine
-				} else if len(matches) == 1 {
-					m := matches[0]
-					processedLine = line[:m[0]] + fmt.Sprintf("%d\t", id) + line[m[0]+1:]
-					id++
 				}
-			} else {
-				// Regex to match leading ANSI, followed by #\t, \t, or multiple spaces
-				reIndent := regexp.MustCompile(`^((?:\x1b\[[0-9;]*m)*)(#?\t|  +)(.*)`)
-				if matches := reIndent.FindStringSubmatch(line); matches != nil {
-					ansiPrefix := matches[1]
-					indent := matches[2]
-					content := matches[3]
+				// All remaining lines go to otherLines
+				otherLines = lines[j:]
 
-					// Check if it's something we should number
-					// Usually it's numbered if content doesn't start with ( and it's not empty
-					if content != "" && !strings.HasPrefix(content, "(") {
-						if strings.HasPrefix(indent, "#") {
-							processedLine = fmt.Sprintf("%s#%d\t%s", ansiPrefix, id, content)
-						} else {
-							processedLine = fmt.Sprintf("%s%d\t%s", ansiPrefix, id, content)
-						}
-						id++
+				// Process buffered untracked lines
+				rows := len(untrackedLines)
+				maxID := id
+				for r, uLine := range untrackedLines {
+					out, lastIDInLine := processColumnarLine(uLine, id, r, rows, cacheFile)
+					fmt.Println(out)
+					if lastIDInLine >= maxID {
+						maxID = lastIDInLine + 1
 					}
 				}
-			}
-		} else if statusStyle == "--short" {
-			if !strings.HasPrefix(line, "#") && line != "" {
-				processedLine = fmt.Sprintf("%d %s", id, line)
-				id++
+				id = maxID
+
+				// Process remaining other lines
+				for _, oLine := range otherLines {
+					fmt.Println(oLine)
+					cacheLine(oLine, cacheFile)
+				}
+				return
 			}
 		}
 
-		fmt.Println(processedLine)
-		tocache := processedLine
-		re := regexp.MustCompile(`\x1b\[[0-9;]*m`)
-		tocache = re.ReplaceAllString(tocache, "")
-		fmt.Fprintln(cacheFile, tocache)
+		fmt.Println(processAndCacheLine(line, &id, statusStyle, false, 0, cacheFile))
 	}
+
+	// Final check if untracked lines were at the very end
+	if len(untrackedLines) > 0 {
+		rows := len(untrackedLines)
+		for r, uLine := range untrackedLines {
+			out, _ := processColumnarLine(uLine, id, r, rows, cacheFile)
+			fmt.Println(out)
+		}
+	}
+}
+
+func cacheLine(line string, cacheFile *os.File) {
+	re := regexp.MustCompile(`\x1b\[[0-9;]*m`)
+	tocache := re.ReplaceAllString(line, "")
+	fmt.Fprintln(cacheFile, tocache)
+}
+
+func processAndCacheLine(line string, id *int, statusStyle string, isColumnar bool, rowOffset int, cacheFile *os.File) string {
+	processedLine := line
+	if statusStyle == "default" {
+		// git-id.pl:
+		// if ($line =~ /#\t/) { $line =~ s/#\t/#$c\t/; $c += 1; }
+		// elsif ($line =~ /\t/) { $line =~ s/\t/$c\t/; $c += 1; }
+
+		// Handle optional ANSI escapes before the tab
+		reANSI := `(?:\x1b\[[0-9;]*m)*`
+		reHashTab := regexp.MustCompile(`^(` + reANSI + `)#\t`)
+		reTab := regexp.MustCompile(`^(` + reANSI + `)\t`)
+
+		if matches := reHashTab.FindStringSubmatch(line); matches != nil {
+			ansiPrefix := matches[1]
+			processedLine = reHashTab.ReplaceAllString(line, fmt.Sprintf("%s#%d\t", ansiPrefix, *id))
+			*id++
+		} else if matches := reTab.FindStringSubmatch(line); matches != nil {
+			ansiPrefix := matches[1]
+			processedLine = reTab.ReplaceAllString(line, fmt.Sprintf("%s%d\t", ansiPrefix, *id))
+			*id++
+		}
+	} else if statusStyle == "--short" {
+		if !strings.HasPrefix(line, "#") && line != "" {
+			processedLine = fmt.Sprintf("%d %s", *id, line)
+			*id++
+		}
+	}
+
+	tocache := processedLine
+	re := regexp.MustCompile(`\x1b\[[0-9;]*m`)
+	tocache = re.ReplaceAllString(tocache, "")
+	fmt.Fprintln(cacheFile, tocache)
+	return processedLine
+}
+
+func processColumnarLine(line string, startID int, row int, totalRows int, cacheFile *os.File) (string, int) {
+	currentID := startID + row
+	lastID := currentID
+
+	re := regexp.MustCompile(`([\t ])(\S)`)
+	processedLine := re.ReplaceAllStringFunc(line, func(match string) string {
+		sub := re.FindStringSubmatch(match)
+		space := sub[1]
+		firstChar := sub[2]
+
+		numStr := fmt.Sprintf("%d", currentID)
+		if currentID < 10 && space == " " {
+			numStr = fmt.Sprintf("%d ", currentID)
+		}
+		res := fmt.Sprintf("%s%s%s", numStr, space, firstChar)
+
+		lastID = currentID
+		currentID += totalRows
+		return res
+	})
+
+	// Remove leading spaces if any
+	processedLine = strings.TrimLeft(processedLine, " ")
+
+	cacheLine(processedLine, cacheFile)
+
+	return processedLine, lastID
 }
 
 func resolveIDs(ids []string, fileFor map[string]string) []string {
@@ -543,6 +610,9 @@ func runNumber(args []string) {
 				i++
 				i++ // Move to next arg after -c <cmd>
 				break
+			} else {
+				fmt.Fprintf(os.Stderr, "-c requires command\n")
+				os.Exit(1)
 			}
 		}
 		if strings.HasPrefix(arg, "--color=") {
@@ -554,17 +624,25 @@ func runNumber(args []string) {
 		} else if strings.HasPrefix(arg, "--column") {
 			statusOpts = append(statusOpts, arg)
 		} else if arg == "--" {
-			i++
 			break
 		}
 	}
 
 	remainingArgs := args[i:]
-	if len(remainingArgs) == 0 && run == "git" {
+	if run == "git" && (len(remainingArgs) == 0 || remainingArgs[0] == "--") {
 		idArgs := []string{"--color=" + color}
 		idArgs = append(idArgs, statusOpts...)
+		idArgs = append(idArgs, remainingArgs...)
 		runID(idArgs)
 		return
+	}
+
+	if run == "git" {
+		// Check if the first remaining arg is a known git command
+		// If not, we might want to run ID with these as pathspecs
+		// but git-number.pl does this:
+		// if ($run eq 'git' && scalar @ARGV == 0) { ... exit run_cmd(git-id ...) }
+		// Wait, my i loop already consumed options.
 	}
 
 	cache, _ := readCache()
