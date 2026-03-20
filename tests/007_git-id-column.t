@@ -2,7 +2,7 @@
 
 source "$(dirname "$0")/lib/test-lib.sh"
 
-plan 1
+plan 2
 
 setup
 
@@ -14,17 +14,19 @@ setup
     echo b > two.txt
 )
 
-# Only run if git column is supported
-if echo a | git column > /dev/null 2>&1; then
-    got=$(cd "$workdir" && git id --color=never --column=always)
-    # Match 1 one.txt and 2 two.txt on the same line
-    if [[ "$got" =~ "1	one.txt" && "$got" =~ "2  two.txt" ]]; then
-        ok "git id --column"
-    else
-        not_ok "git id --column" "$got" "1 one.txt ... 2 two.txt"
-    fi
+got=$(cd "$workdir" && git id --color=never --column=always)
+# Match 1 one.txt and 2 two.txt on the same line
+if [[ "$got" =~ "1	one.txt" && "$got" =~ "2  two.txt" ]]; then
+    ok "git id --column"
 else
-    echo "ok $test_count - skip: git status does not support --column"
+    not_ok "git id --column" "$got" "1 one.txt ... 2 two.txt"
+fi
+
+got=$(cd "$workdir" && git list 2)
+if [[ "$got" = "two.txt" ]]; then
+    ok "'git list 2' returns two.txt"
+else
+    not_ok "'git list 2' with 'git id --column=always' failed" "$got" "two.txt"
 fi
 
 test_done
