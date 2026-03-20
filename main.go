@@ -509,18 +509,19 @@ var (
 func cacheLine(line string, cacheFile *os.File) {
 	tocache := line
 
-	// 1. replace {id}[\t ]{1,2} with \n$1\t globally
+	// 1. remove ANSI colors
+	tocache = decolorize(tocache)
+
+	// 2. replace {id}[\t ]{1,2} with \n$1\t globally
 	//
 	//    {1}	file.txt {2} foo.txt
 	//
 	//    1<tab>file.txt
 	//    2<tab>foo.txt
 	//
-	// 2. Remove temporary braces {id} becomes id
+	// 3. Remove temporary braces {id} becomes id
 	tocache = reIDAndFilename.ReplaceAllString(tocache, "\n$1\t")
 
-	// 3. remove ANSI colors
-	tocache = decolorize(tocache)
 	fmt.Fprintln(cacheFile, tocache)
 }
 
