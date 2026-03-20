@@ -2,7 +2,7 @@
 
 source "$(dirname "$0")/lib/test-lib.sh"
 
-plan 11
+plan 14
 
 setup
 
@@ -113,7 +113,20 @@ assert_eq "$got" "foo.txt" "git-number -c ls 1"
 got=$(cd "$workdir" && git number -c cat 2)
 assert_eq "$got" "Needle" "'git-number -c ...' in different dir"
 
-# Test 10: retain -- in command line arg
+# Test 10: 'git-number -c echo' must run echo
+got=$(cd "$workdir" && git number -c echo)
+assert_eq "$got" "" "'git-number -c echo' must run echo"
+
+# Test 11: 'git-number -c echo foobarbaz' must run echo foobarbaz
+got=$(cd "$workdir" && git number -c echo foobarbaz)
+assert_eq "$got" "foobarbaz" "'git-number -c echo foobarbaz' must run echo foobarbaz"
+
+# Test 12: 'git-number -c echo -- passthrough' must run echo -- passthrough
+got=$(cd "$workdir" && git number -c echo -- passthrough)
+assert_eq "$got" "-- passthrough" "'git-number -c echo -- passthrough' must run echo -- passthrough"
+
+
+# Test 13: retain -- in command line arg
 (
     cd "$workdir"
     echo third > third.txt
@@ -125,7 +138,7 @@ assert_eq "$got" "Needle" "'git-number -c ...' in different dir"
 got=$(cd "$workdir" && git number log -1 --format=%s -- third.txt)
 assert_eq "$got" "remove third.txt" "retain -- in command line arg"
 
-# Test 11: recognize numbers after triple dashes ---
+# Test 14: recognize numbers after triple dashes ---
 (
     cd "$workdir"
     git clean -f -q
