@@ -18,7 +18,7 @@ setup
 if echo a | git column > /dev/null 2>&1; then
     got=$(cd "$workdir" && git id --color=never --column=always)
     # Match 1 one.txt and 2 two.txt on the same line
-    if [[ "$got" =~ "1	one.txt" && "$got" =~ "2	two.txt" ]]; then
+    if [[ "$got" =~ "1	one.txt" && "$got" =~ "2  two.txt" ]]; then
         ok "git id --column"
     else
         not_ok "git id --column" "$got" "1 one.txt ... 2 two.txt"
