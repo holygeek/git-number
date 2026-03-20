@@ -572,24 +572,22 @@ func processAndCacheLine(line string, id *int, statusStyle string, isColumnar bo
 
 		if matches := reHashTab.FindStringSubmatch(line); matches != nil {
 			ansiPrefix := matches[1]
-			processedLine = reHashTab.ReplaceAllString(line, fmt.Sprintf("%s#%d\t", ansiPrefix, *id))
+			processedLine = reHashTab.ReplaceAllString(line, fmt.Sprintf("%s#{%d}\t", ansiPrefix, *id))
 			*id++
 		} else if matches := reTab.FindStringSubmatch(line); matches != nil {
 			ansiPrefix := matches[1]
-			processedLine = reTab.ReplaceAllString(line, fmt.Sprintf("%s%d\t", ansiPrefix, *id))
+			processedLine = reTab.ReplaceAllString(line, fmt.Sprintf("%s{%d}\t", ansiPrefix, *id))
 			*id++
 		}
 	} else if statusStyle == "--short" {
 		if !strings.HasPrefix(line, "#") && line != "" {
-			processedLine = fmt.Sprintf("%d %s", *id, line)
+			processedLine = fmt.Sprintf("{%d} %s", *id, line)
 			*id++
 		}
 	}
 
-	tocache := processedLine
-	re := regexp.MustCompile(`\x1b\[[0-9;]*m`)
-	tocache = re.ReplaceAllString(tocache, "")
-	fmt.Fprintln(cacheFile, tocache)
+	cacheLine(processedLine, cacheFile)
+	processedLine = reBracedID.ReplaceAllString(processedLine, "$1")
 	return processedLine
 }
 
