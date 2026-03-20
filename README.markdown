@@ -1,6 +1,9 @@
 ### git-number ###
 
-`git-number` is a Go program that increases my command-line git productivity.
+`git-number` is a program that increases my command-line git productivity.
+The original version was written in Perl. The Perl implementation has
+been preserved in the `perl` branch and will no longer be updated.
+The current version is written in Go.
 ## Usage Examples ##
 
 Here's how it increases my productivity (and might increase yours, too):
@@ -129,10 +132,10 @@ Batteries.
 
 When you run `git number` (or `git number id`), it:
 1. Runs `git status` and inserts a number before each file reported.
-2. Saves a copy of the output and metadata to `.git/gitids.txt`.
+2. Saves a copy of the output and metadata to `.git/gitids.go.txt`.
 
 When you run a command through `git number`, it uses the information in
-`.git/gitids.txt` to convert numbers and ranges back to their equivalent filenames.
+`.git/gitids.go.txt` to convert numbers and ranges back to their equivalent filenames.
 
 ## Caveat ##
 
