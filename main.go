@@ -493,10 +493,59 @@ SEE ALSO
 	}
 }
 
+var (
+	reIDAndFilename = regexp.MustCompile(`\s*{(\d+)}\s+`)
+)
+
 func cacheLine(line string, cacheFile *os.File) {
-	re := regexp.MustCompile(`\x1b\[[0-9;]*m`)
-	tocache := re.ReplaceAllString(line, "")
+	tocache := line
+
+	// 1. replace {id}[\t ]{1,2} with \n$1\t globally
+	//
+	//    {1}	file.txt {2} foo.txt
+	//
+	//    1<tab>file.txt
+	//    2<tab>foo.txt
+	//
+	// 2. Remove temporary braces {id} becomes id
+	tocache = reIDAndFilename.ReplaceAllString(tocache, "\n$1\t")
+
+	// 3. remove ANSI colors
+	tocache = decolorize(tocache)
 	fmt.Fprintln(cacheFile, tocache)
+}
+
+func decolorize(s string) string {
+	var b strings.Builder
+	b.Grow(len(s))
+
+	const esc = '\x1b'
+
+	for i := 0; i < len(s); {
+		// Look for ESC [
+		if s[i] == esc && i+1 < len(s) && s[i+1] == '[' {
+			j := i + 2
+
+			// Consume parameter bytes: digits + ';'
+			for j < len(s) && ((s[j] >= '0' && s[j] <= '9') || s[j] == ';') {
+				j++
+			}
+
+			// If this is an SGR sequence (ends with 'm'), skip it
+			if j < len(s) && s[j] == 'm' {
+				i = j + 1
+				continue
+			}
+
+			// Not an SGR sequence → treat as normal text
+			// fall through and copy one byte
+		}
+
+		b.WriteByte(s[i])
+		i++
+	}
+
+	return b.String()
 }
 
 func processAndCacheLine(line string, id *int, statusStyle string, isColumnar bool, rowOffset int, cacheFile *os.File) string {
@@ -534,6 +583,10 @@ func processAndCacheLine(line string, id *int, statusStyle string, isColumnar bo
 	return processedLine
 }
 
+var (
+	reBracedID = regexp.MustCompile(`{([0-9]+)}`)
+)
+
 func processColumnarLine(line string, startID int, row int, totalRows int, cacheFile *os.File) (string, int) {
 	currentID := startID + row
 	lastID := currentID
@@ -544,11 +597,11 @@ func processColumnarLine(line string, startID int, row int, totalRows int, cache
 		space := sub[1]
 		firstChar := sub[2]
 
-		numStr := fmt.Sprintf("%d", currentID)
+		numStr := fmt.Sprintf("{%d}", currentID)
 		if currentID < 10 && space == " " {
-			numStr = fmt.Sprintf("%d ", currentID)
+			numStr = fmt.Sprintf("{%d} ", currentID)
 		}
-		res := fmt.Sprintf("%s%s%s", numStr, space, firstChar)
+		res := fmt.Sprintf("%s%s%s", numStr, space, firstChar) // TODO color reset and red
 
 		lastID = currentID
 		currentID += totalRows
@@ -559,6 +612,8 @@ func processColumnarLine(line string, startID int, row int, totalRows int, cache
 	processedLine = strings.TrimLeft(processedLine, " ")
 
 	cacheLine(processedLine, cacheFile)
+
+	processedLine = reBracedID.ReplaceAllString(processedLine, "$1")
 
 	return processedLine, lastID
 }
