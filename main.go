@@ -37,7 +37,7 @@ func readCache() (*Cache, error) {
 		return nil, err
 	}
 
-	cachePath := filepath.Join(gitDir, "gitids.txt")
+	cachePath := filepath.Join(gitDir, gitIDFile)
 	file, err := os.Open(cachePath)
 	if err != nil {
 		if os.IsNotExist(err) {
@@ -316,6 +316,10 @@ func main() {
 	runNumber(args)
 }
 
+var (
+	gitIDFile = "gitids.go.txt"
+)
+
 func runID(args []string) {
 	if len(args) > 0 && (args[0] == "-h" || args[0] == "--help") {
 		fmt.Print(`NAME
@@ -405,7 +409,7 @@ SEE ALSO
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}
-	cachePath := filepath.Join(gitDir, "gitids.txt")
+	cachePath := filepath.Join(gitDir, gitIDFile)
 	var cacheFile *os.File
 	cacheFile, err = os.Create(cachePath)
 	if err != nil {
