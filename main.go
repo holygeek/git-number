@@ -285,6 +285,11 @@ func setGitAlias() {
 	fmt.Println("Git aliases 'id' and 'list' have been set.")
 }
 
+var (
+	colorRed   = "\033[31m"
+	colorReset = "\033[0m"
+)
+
 func main() {
 	if len(os.Args) < 1 {
 		os.Exit(0)
@@ -364,6 +369,10 @@ SEE ALSO
 		}
 		if strings.HasPrefix(arg, "--color=") {
 			color = strings.TrimPrefix(arg, "--color=")
+			if color == "never" {
+				colorRed = ""
+				colorReset = ""
+			}
 		} else if arg == "--short" || arg == "-s" {
 			statusStyle = "--short"
 		} else if strings.HasPrefix(arg, "-u") {
@@ -601,7 +610,9 @@ func processColumnarLine(line string, startID int, row int, totalRows int, cache
 		if currentID < 10 && space == " " {
 			numStr = fmt.Sprintf("{%d} ", currentID)
 		}
-		res := fmt.Sprintf("%s%s%s", numStr, space, firstChar) // TODO color reset and red
+		res := fmt.Sprintf("%s%s%s%s%s",
+			colorReset, numStr, colorRed,
+			space, firstChar) // TODO color reset and red
 
 		lastID = currentID
 		currentID += totalRows
