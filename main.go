@@ -71,9 +71,6 @@ func readCache() (*Cache, error) {
 	needFixDir := cache.CWD != currentCWD
 
 	// Read entries
-	reNormal := regexp.MustCompile(`^#?([0-9]+)\t([^:]+:\s+)?(.*)`)
-	reShort := regexp.MustCompile(`^([0-9]+)\s+([^ ]+)\s+(.*)`)
-
 	for scanner.Scan() {
 		line := scanner.Text()
 		var entry FileEntry
@@ -127,7 +124,6 @@ func readCache() (*Cache, error) {
 
 func explodeArgs(args []string) []string {
 	var wanted []string
-	reRange := regexp.MustCompile(`^([0-9]+)-([0-9]+)$`)
 
 	for _, arg := range args {
 		if matches := reRange.FindStringSubmatch(arg); matches != nil {
@@ -151,7 +147,7 @@ func escapeFilename(filename string, forDisplay bool) string {
 		return filename
 	}
 	if strings.ContainsAny(filename, "`$\"") {
-		filename = regexp.MustCompile("([`$\"])").ReplaceAllString(filename, "\\$1")
+		filename = reNeedEscape.ReplaceAllString(filename, "\\$1")
 	}
 	if strings.ContainsAny(filename, " '[]()&") {
 		filename = "\"" + filename + "\""
@@ -285,9 +281,31 @@ func setGitAlias() {
 	fmt.Println("Git aliases 'id' and 'list' have been set.")
 }
 
+// colors
 var (
 	colorRed   = "\033[31m"
 	colorReset = "\033[0m"
+)
+
+// regexes
+var (
+	reIDAndFilename = regexp.MustCompile(`\s*{(\d+)}\s+`)
+
+	reBracedID  = regexp.MustCompile(`{([0-9]+)}`)
+	reFileEntry = regexp.MustCompile(`([\t ])(\S)`)
+
+	// Handle optional ANSI escapes before the tab
+	reANSI = `(?:\x1b\[[0-9;]*m)*`
+	reHashTab   = regexp.MustCompile(`^(` + reANSI + `)#\t`)
+	reTab       = regexp.MustCompile(`^(` + reANSI + `)\t`)
+
+	reNumber = regexp.MustCompile(`^[0-9]+$`)
+	reRange = regexp.MustCompile(`^([1-9]+)-([0-9]+)$`)
+
+	reNormal = regexp.MustCompile(`^#?([0-9]+)\t([^:]+:\s+)?(.*)`)
+	reShort = regexp.MustCompile(`^([0-9]+)\s+([^ ]+)\s+(.*)`)
+
+	reNeedEscape = regexp.MustCompile("([`$\"])")
 )
 
 func main() {
@@ -502,10 +520,6 @@ SEE ALSO
 	}
 }
 
-var (
-	reIDAndFilename = regexp.MustCompile(`\s*{(\d+)}\s+`)
-)
-
 func cacheLine(line string, cacheFile *os.File) {
 	tocache := line
 
@@ -565,10 +579,6 @@ func processAndCacheLine(line string, id *int, statusStyle string, isColumnar bo
 		// if ($line =~ /#\t/) { $line =~ s/#\t/#$c\t/; $c += 1; }
 		// elsif ($line =~ /\t/) { $line =~ s/\t/$c\t/; $c += 1; }
 
-		// Handle optional ANSI escapes before the tab
-		reANSI := `(?:\x1b\[[0-9;]*m)*`
-		reHashTab := regexp.MustCompile(`^(` + reANSI + `)#\t`)
-		reTab := regexp.MustCompile(`^(` + reANSI + `)\t`)
 
 		if matches := reHashTab.FindStringSubmatch(line); matches != nil {
 			ansiPrefix := matches[1]
@@ -591,17 +601,12 @@ func processAndCacheLine(line string, id *int, statusStyle string, isColumnar bo
 	return processedLine
 }
 
-var (
-	reBracedID = regexp.MustCompile(`{([0-9]+)}`)
-)
-
 func processColumnarLine(line string, startID int, row int, totalRows int, cacheFile *os.File) (string, int) {
 	currentID := startID + row
 	lastID := currentID
 
-	re := regexp.MustCompile(`([\t ])(\S)`)
-	processedLine := re.ReplaceAllStringFunc(line, func(match string) string {
-		sub := re.FindStringSubmatch(match)
+	processedLine := reFileEntry.ReplaceAllStringFunc(line, func(match string) string {
+		sub := reFileEntry.FindStringSubmatch(match)
 		space := sub[1]
 		firstChar := sub[2]
 
@@ -744,8 +749,8 @@ func runNumber(args []string) {
 		}
 
 		// Check if it's a number or range
-		isNumber := regexp.MustCompile(`^[0-9]+$`).MatchString(arg)
-		isRange := regexp.MustCompile(`^[0-9]+-[0-9]+$`).MatchString(arg)
+		isNumber := reNumber.MatchString(arg)
+		isRange := reRange.MatchString(arg)
 
 		if isNumber || isRange {
 			exploded := explodeArgs([]string{arg})
