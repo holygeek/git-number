@@ -12,7 +12,9 @@ export GIT_AUTHOR_EMAIL='author@example.com'
 export GIT_AUTHOR_NAME='A. U. Thor'
 export GIT_COMMITTER_EMAIL='author@example.com'
 export GIT_COMMITTER_NAME='A. U. Thor'
-export GIT_CONFIG_PARAMETERS="'alias.id=number id' 'alias.list=number list'"
+
+# Do not rely on these two aliases for tests, use 'git number id' or 'git number list' directly
+#export GIT_CONFIG_PARAMETERS="'alias.id=number id' 'alias.list=number list'"
 
 test_count=0
 test_failed=0

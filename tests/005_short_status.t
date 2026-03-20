@@ -16,8 +16,8 @@ setup
 got=$(cd "$workdir" && git number --color=never -s)
 assert_eq "$got" "1 A  one.txt" "Show status in short format"
 
-# Test: git list: Handle short status
-got=$(cd "$workdir" && git list 1)
-assert_eq "$got" "one.txt" "git list: Handle short status"
+# Test: git number list: Handle short status
+got=$(cd "$workdir" && git number list 1)
+assert_eq "$got" "one.txt" "git number list: Handle short status"
 
 test_done

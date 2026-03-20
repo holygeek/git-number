@@ -28,7 +28,7 @@ fi
     git config color.status.untracked 'red bold'
     git number --color=always > /dev/null
 )
-got=$(cd "$workdir" && git list 2)
+got=$(cd "$workdir" && git number list 2)
 assert_eq "$got" "untracked1.txt" "git number with untracked in bold red"
 
 test_done

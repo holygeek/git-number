@@ -35,8 +35,8 @@ else
     not_ok "Modified a file in submodule" "$got" "1 modified: b (modified content)"
 fi
 
-# Test: Get name of modified submodule using git list
-got=$(cd "$workdir/a" && git list 1)
-assert_eq "$got" "b" "Get name of modified submodule using git list"
+# Test: Get name of modified submodule using git number list
+got=$(cd "$workdir/a" && git number list 1)
+assert_eq "$got" "b" "Get name of modified submodule using git number list"
 
 test_done
